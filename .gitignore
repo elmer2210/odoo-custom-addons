@@ -1,0 +1,37 @@
+# Archivos de Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+
+# Archivos de log
+*.log
+
+# Directorios de entorno virtual
+venv/
+ENV/
+env/
+*.egg-info/
+
+# Archivos de configuración de IDE
+.vscode/
+.idea/
+*.swp
+*~
+
+# Archivos de caché de Odoo
+*.dat
+*.db
+*.bak
+.odoo/
+
+# Archivos y carpetas que no deben estar en el control de versiones
+*.DS_Store
+*.~lock.*
+
+# Archivos de datos temporales y backups
+*.tmp
+*.temp
+*.backup
+

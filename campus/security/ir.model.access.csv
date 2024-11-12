@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_campus_faculty,campus.faculty,model_campus_faculty,,1,1,1,1
+access_campus_career,campus.career,model_campus_career,,1,1,1,1
+access_campus_campus,campus.campus,model_campus_campus,,1,1,1,1

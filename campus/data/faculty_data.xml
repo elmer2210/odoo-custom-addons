@@ -1,0 +1,25 @@
+<odoo>
+    <record id="umet-fcee-001" model="campus.faculty">
+        <field name="code">FCEE</field>
+        <field name="name">Facultad de Ciencias Económicas y Empresariales</field>
+    </record>
+    <record id="umet-fcshe-002" model="campus.faculty">
+        <field name="code">FCSHE</field>
+        <field name="name">Facultad de Ciencias Sociales, Humanidades y Educación</field>
+    </record>
+    <record id="umet-fing-003" model="campus.faculty">
+        <field name="code">FING</field>
+        <field name="name">Facultad de Ingenierías</field>
+    </record>
+    <record id="umet-fscf-004" model="campus.faculty">
+        <field name="code">FSCF</field>
+        <field name="name">Facultad de Salud y Cultura Física</field>
+    </record> <record id="umet-uaftt-005" model="campus.faculty">
+        <field name="code">UAFTT</field>
+        <field name="name">Unidad Académica de Formación Técnica y Tecnológica</field>
+    </record>
+    <record id="umet-fder-006" model="campus.faculty">
+        <field name="code">FDER</field>
+        <field name="name">Facultad de Derecho</field>
+    </record>
+</odoo>

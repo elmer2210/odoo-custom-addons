@@ -1,0 +1,24 @@
+<odoo>
+    <record id="view_career_form" model="ir.ui.view">
+        <field name="name">career.form</field>
+        <field name="model">campus.career</field>
+        <field name="arch" type="xml">
+            <form string="Career">
+                <sheet>
+                    <group>
+			<field name="code"/>
+                        <field name="name"/>
+			<field name="campus_id"/>
+                        <field name="faculty_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_career" model="ir.actions.act_window">
+        <field name="name">Careers</field>
+        <field name="res_model">campus.career</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
