@@ -1,0 +1,15 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Definición del grupo "Student Manager" (gestiona estudiantes) -->
+        <record id="group_student_manager" model="res.groups">
+            <field name="name">Student Manager</field>
+            <field name="category_id" ref="base.module_category_user_type"/>
+        </record>
+
+        <!-- Definición del grupo "Student User" (solo visualiza estudiantes) -->
+        <record id="group_student_user" model="res.groups">
+            <field name="name">Student User</field>
+            <field name="category_id" ref="base.module_category_user_type"/>
+        </record>
+    </data>
+</odoo>

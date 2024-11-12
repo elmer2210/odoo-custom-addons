@@ -1,0 +1,7 @@
+<odoo>
+    <!-- Menú principal para la gestión de ingresos -->
+    <menuitem id="menu_library_root" name="Library Management" sequence="1"/>
+
+    <!-- Submenú para los registros de acceso -->
+    <menuitem id="menu_library_access" name="Library Access" parent="menu_library_root" action="action_library_access" sequence="1"/>
+</odoo>

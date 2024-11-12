@@ -1,0 +1,35 @@
+<odoo>
+
+    <!-- Vista tree para mostrar registros -->
+    <record id="view_library_access_tree" model="ir.ui.view">
+        <field name="name">library.access.tree</field>
+        <field name="model">library.access</field>
+        <field name="arch" type="xml">
+            <tree string="Library Access">
+                <field name="student_id"/>
+                <field name="campus_id"/>
+                <field name="access_date"/>
+		<field name="faculty_id"/>
+		<field name="career_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista form para crear o editar registros -->
+    <record id="view_library_access_form" model="ir.ui.view">
+        <field name="name">library.access.form</field>
+        <field name="model">library.access</field>
+        <field name="arch" type="xml">
+            <form string="Library Access">
+		<sheet>
+                <group>
+                    <field name="barcode" options="{'widget': 'LibraryAccessNotification'}"/>
+                </group>
+		<!--footer>	
+		    <button string="Registrar Entrada" type="object" name="create_access_record" class="btn-primary"/>
+		</footer-->
+		</sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
