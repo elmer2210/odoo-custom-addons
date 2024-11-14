@@ -6,8 +6,8 @@ class StudentProfile(models.Model):
     _description = 'Perfil de Estudiante'
     _rec_name = 'name'
 
-    barcode = fields.Char(string='Código de Barras', required=True)
-    student_id = fields.Char(string='Cédula', required=True)
+    barcode = fields.Char(string='Código de Barras', required=True,  unique=True, index=True)
+    student_id = fields.Char(string='Cédula', required=True,  unique=True, index=True)
     name = fields.Char(string='Nombre Completo', required=True)
     email = fields.Char(string='Correo Electrónico', required=False)
     campus_id = fields.Many2one('student_management.campus', string='Sede', required=True)

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú principal bajo Gestión de Estudiantes -->
+    <menuitem id="menu_student_entry_root" name="Registro de Ingresos" parent="student_management.menu_student_management" sequence="20"/>
+
+    <!-- Menú para Registrar Ingresos -->
+    <menuitem id="menu_student_entry" name="Registrar Ingresos" parent="menu_student_entry_root" action="action_student_entry_form"/>
+
+    <!-- Menú para Historial de Ingresos -->
+    <menuitem id="menu_student_entry_history" name="Historial de Ingresos" parent="menu_student_entry_root" action="action_student_entry_tree"/>
+</odoo>

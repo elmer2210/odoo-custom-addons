@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- Acción y menú para Tipos de Discapacidad -->
-    <record id="action_disability_type" model="ir.actions.act_window">
-        <field name="name">Tipos de Discapacidad</field>
-        <field name="res_model">student_management.disability_type</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem id="menu_disability_type" name="Tipos de Discapacidad" parent="menu_student_management" action="action_disability_type"/>
 
     <!-- Vista de Lista -->
     <record id="view_disability_type_tree" model="ir.ui.view">

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+       <!-- Acción para Registrar Ingresos -->
+    <record id="action_student_entry_form" model="ir.actions.act_window">
+        <field name="name">Registrar Ingresos</field>
+        <field name="res_model">student.entry</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_student_entry_form"/>
+        <field name="target">fullscreen</field>
+    </record>
+     <!-- Acción para Historial de Ingresos -->
+    <record id="action_student_entry_tree" model="ir.actions.act_window">
+        <field name="name">Historial de Ingresos</field>
+        <field name="res_model">student.entry</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_student_entry_tree"/>
+    </record>
+</odoo>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Acción para Perfiles de Estudiantes -->
+    <record id="action_student_profile" model="ir.actions.act_window">
+        <field name="name">Perfiles de Estudiantes</field>
+        <field name="res_model">student_management.student_profile</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para Sedes -->
+    <record id="action_campus" model="ir.actions.act_window">
+        <field name="name">Sedes</field>
+        <field name="res_model">student_management.campus</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para Facultades -->
+    <record id="action_faculty" model="ir.actions.act_window">
+        <field name="name">Facultades</field>
+        <field name="res_model">student_management.faculty</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para Carreras -->
+    <record id="action_career" model="ir.actions.act_window">
+        <field name="name">Carreras</field>
+        <field name="res_model">student_management.career</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para Tipos de Discapacidad -->
+    <record id="action_disability_type" model="ir.actions.act_window">
+        <field name="name">Tipos de Discapacidad</field>
+        <field name="res_model">student_management.disability_type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

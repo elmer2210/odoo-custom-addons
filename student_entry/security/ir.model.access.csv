@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_student_entry_admin,student_entry.admin,model_student_entry,group_student_entry_admin,1,1,1,1
+access_student_entry_user,student_entry.user,model_student_entry,group_student_entry_user,1,0,1,0

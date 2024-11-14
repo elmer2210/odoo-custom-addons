@@ -8,5 +8,5 @@ class Campus(models.Model):
     code = fields.Char(string='Código de la Sede', required=False)
     address = fields.Char(string='Dirección', required=False)
     description = fields.Text(string='Descripción', required=False)
-
-    faculty_ids = fields.One2many('student_management.faculty', 'campus_id', string='Facultades')
+    
+    career_ids = fields.One2many('student_management.career', 'campus_id', string='Carreras')

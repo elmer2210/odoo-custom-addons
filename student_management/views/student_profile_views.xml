@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-    <!-- Acción para Perfiles de Estudiantes -->
-    <record id="action_student_profile" model="ir.actions.act_window">
-        <field name="name">Perfiles de Estudiantes</field>
-        <field name="res_model">student_management.student_profile</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <menuitem id="menu_student_profile" name="Perfiles de Estudiantes" parent="menu_student_management" action="action_student_profile"/>
-
+    
     <!-- Vista de Lista -->
     <record id="view_student_profile_tree" model="ir.ui.view">
         <field name="name">student.profile.tree</field>
