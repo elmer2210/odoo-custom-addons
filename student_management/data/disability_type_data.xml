@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="disability_type_visual" model="student_management.disability_type">
+        <field name="name">Visual</field>
+        <field name="code">VISUAL</field>
+    </record>
+    <record id="disability_type_auditiva" model="student_management.disability_type">
+        <field name="name">Auditiva</field>
+        <field name="code">AUDITIVA</field>
+    </record>
+    <record id="disability_type_motora" model="student_management.disability_type">
+        <field name="name">Motora</field>
+        <field name="code">MOTORA</field>
+    </record>
+    <record id="disability_type_cognitiva" model="student_management.disability_type">
+        <field name="name">Cognitiva</field>
+        <field name="code">COGNITIVA</field>
+    </record>
+</odoo>

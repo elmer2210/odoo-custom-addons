@@ -1,8 +1,0 @@
-<odoo>
-    <!-- Menú raíz del módulo campus -->
-    <menuitem id="menu_campus_root" name="Campus" sequence="1"/>
-
-    <!-- Menú de estudiantes -->
-    <menuitem id="menu_student" name="Students" parent="menu_campus_root" sequence="2" action="action_student"/>
-</odoo>
-

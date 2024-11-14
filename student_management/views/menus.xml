@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Menú principal del módulo -->
+    <menuitem id="menu_student_management" name="Gestión de Estudiantes" sequence="10"/>
+
+    <!-- Menú para Perfiles de Estudiantes -->
+    <menuitem id="menu_student_profile" name="Perfiles de Estudiantes" parent="menu_student_management" action="action_student_profile"/>
+
+    <!-- Menú para Sedes -->
+    <menuitem id="menu_campus" name="Sedes" parent="menu_student_management" action="action_campus"/>
+
+    <!-- Menú para Facultades -->
+    <menuitem id="menu_faculty" name="Facultades" parent="menu_student_management" action="action_faculty"/>
+
+    <!-- Menú para Carreras -->
+    <menuitem id="menu_career" name="Carreras" parent="menu_student_management" action="action_career"/>
+
+    <!-- Menú para Tipos de Discapacidad -->
+    <menuitem id="menu_disability_type" name="Tipos de Discapacidad" parent="menu_student_management" action="action_disability_type"/>
+</odoo>
