@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_report_student_profile" model="ir.actions.report">
+            <field name="name">Carnets Estudiantiles</field>
+            <field name="model">student_management.student_profile</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">student_management.student_card_report</field>
+            <field name="report_file">student_management.student_card_report</field>
+            <field name="print_report_name">'Carnet estudiantil'</field>
+            <field name="binding_model_id" ref="model_student_management_student_profile"/>
+        </record>
+    </data>
+</odoo>

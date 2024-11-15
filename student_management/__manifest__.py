@@ -21,6 +21,8 @@
         'views/menus.xml',
         # Datos adicionales
         'data/disability_type_data.xml',  # Opcional
+        'report/student_card_report.xml',  # Report definition
+        'report/student_card_template.xml',  # Report template
     ],
     'installable': True,
     'application': True,

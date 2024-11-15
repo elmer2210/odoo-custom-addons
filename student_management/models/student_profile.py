@@ -1,6 +1,7 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
+
 class StudentProfile(models.Model):
     _name = 'student_management.student_profile'
     _description = 'Perfil de Estudiante'
