@@ -5,7 +5,7 @@
     'author': 'Elmer Rivadeneira',
     'category': 'Education',
     'website': 'http://www.umet.edu.ec',
-    'depends': ['base', 'student_management'],
+    'depends': ['base', 'student_management','mail'],
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',

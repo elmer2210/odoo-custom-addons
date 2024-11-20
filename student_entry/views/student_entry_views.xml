@@ -7,14 +7,13 @@
         <field name="arch" type="xml">
             <form string="Registrar Ingreso">
                 <group>
-                    <!-- Campo para ingresar el código de barras del estudiante -->
-                    <field name="barcode" string="Código de Barras" placeholder="Ingrese o escanee el código de barras aquí" options="{'no_create': True}"/>
-                    <!-- Campo de estudiante que se completa automáticamente según el código de barras -->
-                    <field name="student_id" readonly="1"/>
+                   <!-- Campo para ingresar el código de barras del estudiante con focus automático -->
+                    <field name="barcode" string="Código de Barras" placeholder="Ingrese o escanee el código de barras aquí" 
+                        props="{'readonly': [('student_id', '!=', False)]}" 
+                        options="{'no_create': True}" 
+                        context="{'scan_mode': True}" 
+                        autofocus="autofocus"/>
                 </group>
-                <footer>
-                    <button string="Registrar" type="object" name="action_register_entry" class="btn-primary"/>
-                </footer>
             </form>
         </field>
     </record>

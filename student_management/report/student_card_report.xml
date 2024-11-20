@@ -9,6 +9,7 @@
             <field name="report_file">student_management.student_card_report</field>
             <field name="print_report_name">'Carnet estudiantil'</field>
             <field name="binding_model_id" ref="model_student_management_student_profile"/>
+            <field name="paperformat_id" ref="student_management.student_card_paperformat"/>
         </record>
     </data>
 </odoo>

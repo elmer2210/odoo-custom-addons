@@ -1,29 +1,21 @@
 <odoo>
     <template id="student_card_report">
-        <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="doc">
-                <t t-call="web.external_layout">
-                    <div class="page">
-                        <!-- Aquí va el contenido de tu tarjeta de estudiante -->
-                        <div class="sheet-wrapper" style="page-break-after: always;">
-                            <div class="card" style="width: 90%; height: 90%; margin: auto; border: 2px solid #000; padding: 5mm; box-sizing: border-box;">
-                                <div style="text-align: center;">
-                                    <img t-att-src="'/web/static/src/img/your_logo.png'" alt="Logo" style="width: 50mm; height: auto;"/>
-                                </div>
-                                <div style="margin-top: 10mm;">
-                                    <p><strong>Nombre del Estudiante:</strong> <t t-esc="doc.name"/></p>
-                                    <p><strong>ID del Estudiante:</strong> <t t-esc="doc.student_id"/></p>
-                                    <p><strong>Carrera:</strong> <t t-esc="doc.career_id.name"/></p>
-                                    <p><strong>Sede:</strong> <t t-esc="doc.campus_id.name"/></p>
-                                </div>
-                                <div style="margin-top: 15mm; text-align: center;">
-                                    <img t-att-src="'http://127.0.0.1:8069/report/barcode/Code128/%s/600/100' % (doc.barcode)" alt="Código de Barras" style="margin: auto;"/>
-                                </div>
+            <main class="page" style="width: 210mm; height: 297mm; margin: 0; padding: 0; box-sizing: border-box;">
+                <div class="container-fluid">
+                    <t t-foreach="docs" t-as="doc">
+                        <div style="width: auto; height: auto; border: 2px solid #000; padding: 5mm; box-sizing: border-box;">
+                            <div style="margin-top: 3mm; font-size: 8pt;">
+                                <p><strong>Nombre del Estudiante:</strong> <t t-esc="doc.name"/></p>
+                                <p><strong>ID del Estudiante:</strong> <t t-esc="doc.student_id"/></p>
+                                <p><strong>Carrera:</strong> <t t-esc="doc.career_id.name"/></p>
+                                <p><strong>Sede:</strong> <t t-esc="doc.campus_id.name"/></p>
+                            </div>
+                            <div style="margin-top: 3mm; text-align: center;">
+                                <img t-att-src="'http://192.168.15.61:8069/report/barcode/?barcode_type=Code128&amp;value=%s&amp;width=300&amp;height=100' % doc.barcode" alt="Código de Barras" style="margin: auto;"/>
                             </div>
                         </div>
-                    </div>
-                </t>
-            </t>
-        </t>
-    </template>
+                    </t>
+                </div>
+            </main>
+                </template>
 </odoo>
