@@ -1,0 +1,23 @@
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_notify_loan_expiry" model="ir.cron">
+            <field name="name">Notificar Plazo de Préstamos</field>
+            <field name="model_id" ref="model_library_loan"/>
+            <field name="state">code</field>
+            <field name="code">model._notify_expiring_loans()</field>
+            <field name="interval_type">hours</field>
+            <field name="interval_number">1</field>
+            <field name="active">True</field>
+        </record>
+           <!-- Revisar Préstamos Vencidos -->
+        <record id="ir_cron_check_overdue_loans" model="ir.cron">
+            <field name="name">Revisar Préstamos Vencidos</field>
+            <field name="model_id" ref="model_library_loan"/>
+            <field name="state">code</field>
+            <field name="code">model._check_overdue_loans()</field>
+            <field name="interval_type">hours</field>
+            <field name="interval_number">1</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

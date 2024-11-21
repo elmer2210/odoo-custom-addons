@@ -1,0 +1,13 @@
+<odoo>
+    <record id="view_library_reservation_calendar" model="ir.ui.view">
+        <field name="name">library.reservation.calendar</field>
+        <field name="model">library.loan</field>
+        <field name="arch" type="xml">
+            <calendar string="Reserva de Cubículos" date_start="start_time" date_stop="end_time" color="cubicle_id">
+                <field name="cubicle_id"/>
+                <field name="student_id"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+</odoo>

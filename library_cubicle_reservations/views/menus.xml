@@ -1,0 +1,8 @@
+<odoo>
+    <menuitem id="menu_library_root" name="Gestión de Cubículos" sequence="10"/>
+
+    <menuitem id="menu_library_cubicles" name="Cubículos" parent="menu_library_root" action="action_library_cubicle" sequence="20"/>
+    <menuitem id="menu_library_loans" name="Préstamos" parent="menu_library_root" action="action_library_loan" sequence="30"/>
+    <menuitem id="menu_library_reservations" name="Reservas" parent="menu_library_root" action="action_library_reservation" sequence="40"/>
+
+</odoo>

@@ -1,0 +1,22 @@
+<odoo>
+    <record id="view_library_cubicle_kanban" model="ir.ui.view">
+        <field name="name">library.cubicle.kanban</field>
+        <field name="model">library.cubicle</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="campus_id"/>
+                <field name="status"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <strong><field name="name"/></strong>
+                            <div>Campus: <field name="campus_id"/></div>
+                            <div>Estado: <field name="status"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>

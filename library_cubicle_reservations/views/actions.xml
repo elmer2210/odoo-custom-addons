@@ -1,0 +1,22 @@
+<odoo>
+      <!-- Acción para Cubículos -->
+    <record id="action_library_cubicle" model="ir.actions.act_window">
+        <field name="name">Gestión de Cubículos</field>
+        <field name="res_model">library.cubicle</field>
+        <field name="view_mode">tree,form,kanban</field>
+    </record>
+
+    <!-- Acción para Préstamos -->
+    <record id="action_library_loan" model="ir.actions.act_window">
+        <field name="name">Préstamos de Cubículos</field>
+        <field name="res_model">library.loan</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para Reservas -->
+    <record id="action_library_reservation" model="ir.actions.act_window">
+        <field name="name">Reservas de Cubículos</field>
+        <field name="res_model">library.loan</field>
+        <field name="view_mode">calendar</field>
+    </record>
+</odoo>

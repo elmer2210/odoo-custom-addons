@@ -1,0 +1,33 @@
+<odoo>
+    <record id="view_library_cubicle_tree" model="ir.ui.view">
+        <field name="name">library.cubicle.tree</field>
+        <field name="model">library.cubicle</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="campus_id"/>
+                <field name="cubicle_type"/>
+                <field name="status"/>
+                <field name="disability_preference"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_library_cubicle_form" model="ir.ui.view">
+        <field name="name">library.cubicle.form</field>
+        <field name="model">library.cubicle</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="campus_id"/>
+                        <field name="cubicle_type"/>
+                        <field name="status"/>
+                        <field name="disability_preference"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
