@@ -1,4 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_library_campus,access.library.campus,model_library_campus,,1,0,0,0
-access_library_cubicle,access.library.cubicle,model_library_cubicle,,1,1,1,0
-access_library_loan,access.library.loan,model_library_loan,,1,1,1,0
+access_library_cubicle,access.library.cubicle,model_library_cubicle,,1,1,1,1
+access_library_loan,access.library.loan,model_library_loan,,1,1,1,1
+access_student_management_campus,access.student_management.campus,student_management.model_student_management_campus,,1,0,0,0

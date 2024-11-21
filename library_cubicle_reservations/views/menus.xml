@@ -1,8 +1,11 @@
 <odoo>
+    <!-- Menú principal -->
     <menuitem id="menu_library_root" name="Gestión de Cubículos" sequence="10"/>
 
+    <!-- Menús secundarios -->
     <menuitem id="menu_library_cubicles" name="Cubículos" parent="menu_library_root" action="action_library_cubicle" sequence="20"/>
-    <menuitem id="menu_library_loans" name="Préstamos" parent="menu_library_root" action="action_library_loan" sequence="30"/>
-    <menuitem id="menu_library_reservations" name="Reservas" parent="menu_library_root" action="action_library_reservation" sequence="40"/>
+    <menuitem id="menu_library_loans" name="Préstamos/Reservas" parent="menu_library_root" action="action_library_loan" sequence="30"/>
 
+    <!-- menú para ver/crear las Reservas en el Calendario -->
+    <menuitem id="menu_library_reservation_calendar" name="Calendario" parent="menu_library_root" action="action_library_reservation_calendar" sequence="41"/>
 </odoo>

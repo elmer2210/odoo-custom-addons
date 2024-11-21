@@ -11,12 +11,16 @@
         <field name="name">Préstamos de Cubículos</field>
         <field name="res_model">library.loan</field>
         <field name="view_mode">tree,form</field>
+         <field name="context">{'default_state': 'active'}</field>
     </record>
 
-    <!-- Acción para Reservas -->
-    <record id="action_library_reservation" model="ir.actions.act_window">
-        <field name="name">Reservas de Cubículos</field>
+     <!-- Acción para Ver el Calendario de Reservas -->
+    <record id="action_library_reservation_calendar" model="ir.actions.act_window">
+        <field name="name">Calendario de Reservas</field>
         <field name="res_model">library.loan</field>
         <field name="view_mode">calendar</field>
+        <field name="view_id" ref="view_library_reservation_calendar"/>
+        <field name="context">{'default_state': 'reserved'}</field>
     </record>
+
 </odoo>

@@ -1,13 +1,45 @@
 <odoo>
+    <!-- Vista de Calendario para Reservas -->
     <record id="view_library_reservation_calendar" model="ir.ui.view">
         <field name="name">library.reservation.calendar</field>
         <field name="model">library.loan</field>
         <field name="arch" type="xml">
-            <calendar string="Reserva de Cubículos" date_start="start_time" date_stop="end_time" color="cubicle_id">
+            <calendar string="Reservas de Cubículos" 
+                date_start="start_time" 
+                date_stop="end_time" 
+                color="color" 
+                create="true"
+                quick_create="true"
+                quick_create_view_id="%(library_cubicle_reservations.view_library_reservation_form)d"
+            >
+                <field name="display_name"/>
                 <field name="cubicle_id"/>
                 <field name="student_id"/>
                 <field name="state"/>
             </calendar>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario para Reservas -->
+    <record id="view_library_reservation_form" model="ir.ui.view">
+        <field name="name">library.reservation.form</field>
+        <field name="model">library.loan</field>
+        <field name="arch" type="xml">
+            <form string="Reserva de Cubículo">
+                <sheet>
+                    <group>
+                         <!-- Campo para escanear el código de barras -->
+                        <field name="cubicle_id" required="1" />
+                        <field name="barcode" string="Código de Barras del Estudiante" 
+                            placeholder="Escanea el código aquí" widget="barcode"  
+                            options="{'no_create': True}" autofocus="autofocus"/>
+                        <field name="student_name" readonly="1"/>
+                        <field name="start_time"/>
+                        <field name="end_time"/>
+                        <field name="state" readonly="1" />
+                    </group>
+                </sheet>
+            </form>
         </field>
     </record>
 </odoo>
