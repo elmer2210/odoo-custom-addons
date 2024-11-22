@@ -4,7 +4,7 @@
     'category': 'Library',
     'summary': 'Manage library cubicle loans and reservations',
     'author': 'Elmer Rivadeneira',
-    'depends': ['base', 'student_management'],
+    'depends': ['base', 'student_management', 'notif_utils'],
     'data': [
         'security/ir.model.access.csv',
         'views/library_cubicle_view.xml',

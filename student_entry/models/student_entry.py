@@ -1,5 +1,4 @@
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
 
 class StudentEntry(models.Model):
     _name = 'student.entry'

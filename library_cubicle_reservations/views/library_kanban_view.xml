@@ -3,7 +3,7 @@
         <field name="name">library.cubicle.kanban</field>
         <field name="model">library.cubicle</field>
         <field name="arch" type="xml">
-            <kanban>
+            <kanban default_group_by="status">
                 <field name="name"/>
                 <field name="campus_id"/>
                 <field name="status"/>

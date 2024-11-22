@@ -4,11 +4,16 @@ from odoo.exceptions import UserError, ValidationError
 
 class LibraryLoan(models.Model):
     _name = 'library.loan'
+    _inherit = ['notification.mixin']  # Heredamos el mixin de notificaciones
     _description = 'Library Cubicle Loan'
 
     barcode = fields.Char(string='Código de Barras', help="Escanea el código de barras del estudiante")
-    student_id = fields.Many2one('student_management.student_profile', string='Estudiante', required=True)
-    cubicle_id = fields.Many2one('library.cubicle', string='Cubículo', required=True)
+    student_id = fields.Many2one('student_management.student_profile', string='Estudiante')
+    cubicle_id = fields.Many2one('library.cubicle', 
+                                 string='Cubículo', 
+                                 required=True,
+                                 domain=lambda self: [('campus_id', '=', self.env.user.campus_id.id)]
+                                )
     user_id = fields.Many2one('res.users', string='Bibliotecario', default=lambda self: self.env.user, readonly=True)
     student_name = fields.Char(related='student_id.name', string='Nombres del Estudiante', readonly=True)
     start_time = fields.Datetime(string='Fecha y Hora de Inicio', default=fields.Datetime.now, required=True)
@@ -71,15 +76,84 @@ class LibraryLoan(models.Model):
                 ('id', '!=', record.id)
             ])
             if overlapping_loans:
-                raise UserError(f'El cubículo {record.cubicle_id.name} no está disponible en el horario solicitado. Ya está reservado entre {overlapping_loans[0].start_time} y {overlapping_loans[0].end_time}.')
 
+                 #notificamos el problema
+                self.send_notification(
+                    title= 'Disponibilidad de hora',
+                    message= f'El cubículo {record.cubicle_id.name} no está disponible en el horario solicitado. Ya está reservado entre {overlapping_loans[0].start_time} y {overlapping_loans[0].end_time}.',
+                    sticky= False,  # False hará que la notificación desaparezca automáticamente
+                    msg_type='warning',
+                )
+            
+    @api.model
+    def create(self, vals):
+        """Método para cambiar el estado del cubículo a ocupado cuando se cree un préstamo o reserva sin solapamientos."""
+        
+        # Obtener datos del cubículo y los horarios
+        cubicle_id = vals.get('cubicle_id')
+        start_time = vals.get('start_time')
+        end_time = vals.get('end_time')
+
+        # Buscamos el cubículo seleccionado
+        cubicle = self.env['library.cubicle'].browse(cubicle_id)
+        
+        # Verificamos si hay colisiones de horarios
+        overlapping_loans = self.env['library.loan'].search([
+            ('cubicle_id', '=', cubicle_id),
+            ('state', 'in', ['active', 'overdue']),  # Préstamos activos o vencidos (que aún no fueron devueltos)
+            ('start_time', '<', end_time),
+            ('end_time', '>', start_time)
+        ])
+
+        if overlapping_loans:
+            # Notificamos el problema al bibliotecario
+            self.send_notification(
+                title='Problemas en el préstamo/reserva',
+                message=f'El cubículo seleccionado ({cubicle.name}) ya está reservado o prestado en el mismo horario. Por favor, elija un horario diferente.',
+                sticky=False,
+                msg_type='warning',
+            )
+            # Lanzamos un error para evitar la creación del préstamo.
+            raise UserError(f'El cubículo seleccionado ({cubicle.name}) ya está reservado o prestado en el mismo horario.')
+
+        # Cambiamos el estado del cubículo a ocupado si no hay conflictos de horarios
+        cubicle.status = 'occupied'
+
+        # Creamos el préstamo o la reserva.
+        loan = super(LibraryLoan, self).create(vals)
+
+        # Notificamos la acción de creación exitosa.
+        loan.send_notification(
+            title='Préstamo/Reserva exitoso',
+            message=f'El cubículo ({cubicle.name}) fue prestado o reservado exitosamente a ({loan.student_id.name}).',
+            sticky=False,
+            msg_type='success',
+        )
+
+        return loan
+
+    def write(self, vals):
+        """Sobreescribir el método write para gestionar los cambios de estado."""
+        result = super(LibraryLoan, self).write(vals)
+        
+        # Lógica para devolver el cubículo si el estado se establece en 'returned'
+        if 'state' in vals and vals['state'] == 'returned':
+            for record in self:
+                record.return_cubicle()
+        return result
+    
     def return_cubicle(self):
         self.ensure_one()
         if self.state == 'active':
             self.state = 'returned'
             self.cubicle_id.status = 'available'
         else:
-            raise UserError('El préstamo no está activo o ya fue devuelto.')
+            self.send_notification(
+                title= 'Información',
+                message= 'El préstamo no está activo o ya fue devuelto.',
+                sticky= False,  # False hará que la notificación desaparezca automáticamente
+                msg_type='success',
+            )
 
     @api.model
     def _notify_expiring_loans(self):

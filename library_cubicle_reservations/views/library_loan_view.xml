@@ -18,6 +18,10 @@
         <field name="model">library.loan</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <!-- Campo de estado como statusbar -->
+                    <field name="state" widget="statusbar" statusbar_visible="active,returned,reserved,overdue" options="{'clickable': 1}"/>
+                </header>
                 <sheet>
                     <group>
                          <!-- Campo para escanear el código de barras -->
@@ -25,10 +29,10 @@
                         <field name="barcode" string="Código de Barras del Estudiante" 
                             placeholder="Escanea el código aquí" widget="barcode"  
                             options="{'no_create': True}" autofocus="autofocus"/>
+                        <field name="student_id" invisible="1"/>
                         <field name="student_name" readonly="1"/>
                         <field name="start_time"/>
                         <field name="end_time"/>
-                        <field name="state" readonly="1" />
                     </group>
                 </sheet>
             </form>
