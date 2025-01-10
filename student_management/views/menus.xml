@@ -2,11 +2,15 @@
 <odoo>
     <!-- Menú principal del módulo -->
     <menuitem id="menu_student_management" name="Gestión de Estudiantes" sequence="10"/>
+    <menuitem id="menu_sedes_management" name="Gestión de Sedes" sequence="10"/>
+    <menuitem id="menu_student_entry_management" name="Ingresos" sequence="10"/>
 
     <!-- Menús secundarios -->
     <menuitem id="menu_student_profile" name="Perfiles de Estudiantes" parent="menu_student_management" action="action_student_profile"/>
-    <menuitem id="menu_campus" name="Sedes" parent="menu_student_management" action="action_campus"/>
-    <menuitem id="menu_faculty" name="Facultades" parent="menu_student_management" action="action_faculty"/>
-    <menuitem id="menu_career" name="Carreras" parent="menu_student_management" action="action_career"/>
     <menuitem id="menu_disability_type" name="Tipos de Discapacidad" parent="menu_student_management" action="action_disability_type"/>
+
+    <menuitem id="menu_campus" name="Sedes" parent="menu_sedes_management" action="action_campus"/>
+    <menuitem id="menu_faculty" name="Facultades" parent="menu_sedes_management" action="action_faculty"/>
+    <menuitem id="menu_career" name="Carreras" parent="menu_sedes_management" action="action_career"/>
+
 </odoo>

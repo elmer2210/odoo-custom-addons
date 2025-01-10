@@ -1,0 +1,5 @@
+<odoo>
+    <!-- Menu Items -->
+    <menuitem id="menu_library_root" name="Biblioteca" sequence="10"/>
+    <menuitem id="menu_library_donations" name="Donaciones" parent="menu_library_root" action="action_library_donation" sequence="10"/>
+</odoo>

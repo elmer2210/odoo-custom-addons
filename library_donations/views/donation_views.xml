@@ -1,0 +1,66 @@
+<odoo>
+    <!-- Tree View -->
+    <record id="view_donation_tree" model="ir.ui.view">
+        <field name="name">library.donation.tree</field>
+        <field name="model">library.donation</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="donor_name"/>
+                <field name="student_id" string="Estudiante"/>
+                <field name="campus_name" string="Sede"/>
+                <field name="career_name" string="Carrera"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_donation_form" model="ir.ui.view">
+        <field name="name">library.donation.form</field>
+        <field name="model">library.donation</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="requested,reviewed,approved"/>
+                    <button name="action_review" string="Revisar" type="object" class="btn-primary"
+                            modifiers="{'invisible': [('state', '!=', 'requested')]}"/>
+                    <button name="action_approve" string="Aprobar" type="object" class="btn-success"
+                            modifiers="{'invisible': [('state', '!=', 'reviewed')]}"/>
+                </header>
+
+                <sheet>
+                    <group>
+                        <field name="donation_type" widget="radio" string="Tipo de Donación"/>
+                    </group>
+                    <div>
+                        <group>
+                            <field name="student_id" string="Cédula del Estudiante" 
+                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
+                            <field name="donor_name" string="Donante" readonly="1" 
+                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
+                            <field name="campus_name" string="Sede" readonly="1" 
+                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
+                            <field name="career_name" string="Carrera" readonly="1" 
+                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
+                        </group>
+                        <group>
+                            <field name="group_students" string="Estudiantes del Grupo" widget="many2many_tags" 
+                                   modifiers="{'invisible': [('donation_type', '=', 'individual')]}"/>
+                        </group>
+                    </div>
+                    <group>
+                        <field name="details" placeholder="Detalles de la donación"/>
+                        <field name="invoice"/>
+                        <field name="invoice_name" placeholder="Nombre del archivo"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Action -->
+    <record id="action_library_donation" model="ir.actions.act_window">
+        <field name="name">Gestión de donaciones</field>
+        <field name="res_model">library.donation</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>

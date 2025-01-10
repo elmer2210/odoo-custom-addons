@@ -1,0 +1,12 @@
+<odoo>
+    <template id="library_donation_certificate">
+        <t t-call="web.html_container">
+            <div class="page">
+                <h1>Certificado de Donación</h1>
+                <p>Donante: <t t-esc="doc.donor_name"/></p>
+                <p>Detalles: <t t-esc="doc.details"/></p>
+                <p>Estado: <t t-esc="doc.state"/></p>
+            </div>
+        </t>
+    </template>
+</odoo>
