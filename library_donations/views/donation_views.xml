@@ -19,6 +19,7 @@
         <field name="model">library.donation</field>
         <field name="arch" type="xml">
             <form>
+                <!-- Encabezado -->
                 <header>
                     <field name="state" widget="statusbar" statusbar_visible="requested,reviewed,approved"/>
                     <button name="action_review" string="Revisar" type="object" class="btn-primary"
@@ -28,30 +29,45 @@
                 </header>
 
                 <sheet>
+                    <!-- Tipo de Donación -->
                     <group>
                         <field name="donation_type" widget="radio" string="Tipo de Donación"/>
                     </group>
-                    <div>
-                        <group>
-                            <field name="student_id" string="Cédula del Estudiante" 
-                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
-                            <field name="donor_name" string="Donante" readonly="1" 
-                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
-                            <field name="campus_name" string="Sede" readonly="1" 
-                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
-                            <field name="career_name" string="Carrera" readonly="1" 
-                                   modifiers="{'invisible': [('donation_type', '=', 'group')]}"/>
-                        </group>
-                        <group>
-                            <field name="group_students" string="Estudiantes del Grupo" widget="many2many_tags" 
-                                   modifiers="{'invisible': [('donation_type', '=', 'individual')]}"/>
-                        </group>
-                    </div>
-                    <group>
-                        <field name="details" placeholder="Detalles de la donación"/>
-                        <field name="invoice"/>
-                        <field name="invoice_name" placeholder="Nombre del archivo"/>
+
+                    <!-- Sección para Donación Individual -->
+                    <group invisible="donation_type == 'group'">
+                        <field name="student_id" string="Estudiante"/>
+                        <field name="donor_name" string="Nombre del Donante" readonly="1"/>
+                        <field name="campus_name" string="Sede" readonly="1"/>
+                        <field name="career_name" string="Carrera" readonly="1"/>
                     </group>
+
+                    <!-- Ítems Donados -->
+                    <notebook>
+                        <page string="Ítems Donados">
+                            <field name="donation_items" string="Ítems Donados">
+                                <tree editable="bottom">
+                                    <field name="title" string="Título"/>
+                                    <field name="author" string="Autor"/>
+                                    <field name="publication_year" string="Año de Publicación"/>
+                                    <field name="cost" string="Costo" sum="Total: "/>
+                                </tree>
+                            </field>
+                        </page>
+                        <!-- Pestaña para Donación Grupal -->
+                        <page string="Donación Grupal" invisible="donation_type == 'individual'">
+                            <field name="group_students" string="Estudiantes del Grupo">
+                                <tree editable="bottom">
+                                    <field name="barcode"/>
+                                    <field name="student_id"/>
+                                    <field name="name"/>
+                                    <field name="campus_id"/>
+                                    <field name="faculty_id"/>
+                                    <field name="career_id"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>
