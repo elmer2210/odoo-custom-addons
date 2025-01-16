@@ -4,77 +4,68 @@ from odoo.exceptions import ValidationError
 
 class LibraryDonation(models.Model):
     _name = 'library.donation'
-    _inherit = 'notification.mixin'
     _description = 'Gestión de Donaciones'
+    _inherit = ['mail.thread']
 
-    # Campos
+    name = fields.Char(string="Código de Donación", readonly=True, copy=False)
     donation_type = fields.Selection([
         ('individual', 'Individual'),
         ('group', 'Grupal')
     ], string="Tipo de Donación", required=True, default='individual')
+    date = fields.Date(string="Fecha de Donación", default=fields.Date.context_today)
 
-    donor_name = fields.Many2one('student_management.student_profile', string="Donante", readonly=True)
-    student_id = fields.Char(string="Cédula del Estudiante", required=False)  # Solo requerido para donaciones individuales
-    campus_name = fields.Many2one('student_management.campus', string="Sede", readonly=True)
-    career_name = fields.Many2one('student_management.career', string="Carrera", readonly=True)
-    group_students = fields.One2many('student_management.student_profile', 'id', string="Estudiantes del Grupo")  # Relación para donaciones grupales
-    invoice = fields.Binary(string="Factura (PDF)", required=True)
-    invoice_name = fields.Char(string="Nombre de la Factura", required=True)
-    details = fields.Text(string="Detalles de Factura", required=True)
+    # Clasificadores
+    campus_id = fields.Many2one('student_management.campus', string="Sede", required=True)
+    career_id = fields.Many2one(
+        'student_management.career',
+        string="Carrera",
+        required=True,
+        domain="[('faculty_id', '=', campus_id)]"
+    )
+
+    # Relación con estudiantes
+    donor_ids = fields.Many2many(
+        'student_management.student_profile',
+        string="Donadores",
+        domain="[('campus_id', '=', campus_id), ('career_id', '=', career_id)]"
+    )
+
+    # Ítems Donados
+    donation_items = fields.One2many('library.donation.item', 'donation_id', string="Ítems Donados")
+    total_cost = fields.Float(string="Costo Total", compute="_compute_total_cost", store=True)
+
+    # Factura
+    invoice_pdf = fields.Binary(string="Archivo de Factura (PDF)")
+    invoice_number = fields.Char(string="Número de Factura", required=True)
+    invoice_date = fields.Date(string="Fecha de Emisión", required=True)
+
+    # Estado
     state = fields.Selection([
         ('requested', 'Solicitado'),
         ('reviewed', 'Revisado'),
-        ('approved', 'Aprobado'),
-    ], string="Estado", default='requested', required=True)
+        ('approved', 'Aprobado')
+    ], string="Estado", default='requested', tracking=True)
 
-    @api.onchange('student_id', 'donation_type')
-    def _onchange_student_id(self):
-        """Valida la cédula para donación individual y rellena datos relacionados."""
-        if self.donation_type == 'individual' and self.student_id:
-            # Buscar al estudiante por cédula
-            student = self.env['student_management.student_profile'].search([('student_id', '=', self.student_id)], limit=1)
-            if student:
-                # Rellenar los campos relacionados
-                self.donor_name = student.id
-                self.campus_name = student.campus_id.id
-                self.career_name = student.career_id.id
-            else:
-                # Limpiar los campos si no se encuentra el estudiante
-                self.donor_name = False
-                self.campus_name = False
-                self.career_name = False
-                raise ValidationError("No se encontró un estudiante con la cédula ingresada.")
-        elif self.donation_type == 'group':
-            # Limpiar campos individuales si es grupal
-            self.student_id = False
-            self.donor_name = False
-            self.campus_name = False
-            self.career_name = False
-
-    @api.constrains('student_id', 'group_students', 'donation_type')
-    def _check_donation_type(self):
-        """Validación para asegurar que los datos estén completos según el tipo de donación."""
+    @api.depends('donation_items.cost')
+    def _compute_total_cost(self):
+        """Calcula el costo total de los ítems donados."""
         for record in self:
-            if record.donation_type == 'individual':
-                if not record.student_id:
-                    raise ValidationError("Debe ingresar la cédula de un estudiante para una donación individual.")
-                student = self.env['student_management.student_profile'].search([('student_id', '=', record.student_id)], limit=1)
-                if not student:
-                    raise ValidationError("La cédula ingresada no corresponde a un estudiante válido.")
-            elif record.donation_type == 'group':
-                if not record.group_students:
-                    raise ValidationError("Debe vincular al menos un estudiante para una donación grupal.")
+            record.total_cost = sum(item.cost for item in record.donation_items)
+
+    @api.constrains('invoice_number')
+    def _check_invoice_number(self):
+        """Asegura que el número de factura sea único."""
+        for record in self:
+            existing = self.search([('invoice_number', '=', record.invoice_number), ('id', '!=', record.id)])
+            if existing:
+                raise ValidationError(f"El número de factura '{record.invoice_number}' ya está registrado.")
 
     def action_review(self):
+        """Cambiar el estado a 'Revisado'."""
         for record in self:
             record.state = 'reviewed'
 
     def action_approve(self):
+        """Cambiar el estado a 'Aprobado'."""
         for record in self:
             record.state = 'approved'
-            record.send_notification(
-                title="Donación Aprobada",
-                message="La donación ha sido aprobada con éxito.",
-                sticky=True,
-                msg_type='success'
-            )
