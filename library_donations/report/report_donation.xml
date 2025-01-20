@@ -1,0 +1,11 @@
+<odoo>
+    <record id="report_donation" model="ir.actions.report">
+        <field name="name">Certificado de Donación</field>
+        <field name="model">library.donation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">library_donations.donation_certificate_template</field>
+        <field name="report_file">library_donations.donation_certificate_template</field>
+        <field name="binding_model_id" ref="model_library_donation"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

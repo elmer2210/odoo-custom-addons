@@ -1,0 +1,69 @@
+<odoo>
+    <template id="donation_certificate_template">
+        <t t-call="web.html_container">
+            <t t-call="web.internal_layout">
+                <div class="page">
+                    <!-- Encabezado -->
+                    <h2 style="text-align: center;">Reporte de Donación</h2>
+                    <p style="text-align: center;">
+                        Código de Donación: <t t-esc="doc.name"/>
+                        <br/>
+                        Fecha: <t t-esc="doc.date"/>
+                    </p>
+
+                    <!-- Donadores >
+                    <h3>Donadores</h3>
+                    <table class="table table-sm o_main_table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Carrera</th>
+                                <th>Sede</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc.donor_ids" t-as="donor">
+                                <tr>
+                                    <td><t t-esc="donor.name"/></td>
+                                    <td><t t-esc="donor.student_id"/></td>
+                                    <td><t t-esc="donor.career_id.name"/></td>
+                                    <td><t t-esc="donor.campus_id.name"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <! Ítems Donados >
+                    <h3>Ítems Donados</h3>
+                    <table class="table table-sm o_main_table">
+                        <thead>
+                            <tr>
+                                <th>Título</th>
+                                <th>Autor</th>
+                                <th>Año de Publicación</th>
+                                <th>Costo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="doc.donation_items" t-as="item">
+                                <tr>
+                                    <td><t t-esc="item.title"/></td>
+                                    <td><t t-esc="item.author"/></td>
+                                    <td><t t-esc="item.publication_year"/></td>
+                                    <td><t t-esc="item.cost"/></td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table-->
+
+                    <!-- Firma Electrónica -->
+                    <div style="margin-top: 30px; text-align: right;">
+                        <img t-att-src="'/web/image/res.company/%d/logo' % (doc.company_id.id,)" alt="Firma Electrónica" width="150"/>
+                        <p>Firma Electrónica Autorizada</p>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

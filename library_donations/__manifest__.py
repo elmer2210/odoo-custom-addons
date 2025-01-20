@@ -13,10 +13,12 @@
     'depends': ['base', 'website', 'portal', 'student_management'],
     'data': [
         #'security/security.xml',
+        'report/report_donation.xml',
+        'report/report_donation_template.xml',
         'security/ir.model.access.csv',
+        'data/ir_sequence_data.xml',
         'views/donation_views.xml',
         'views/donation_menu.xml',
-        'report/donation_certificate.xml',
     ],
     'installable': True,
     'application': True,

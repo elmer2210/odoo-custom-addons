@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_admin_library,access_admin_library,model_library_donation,,1,1,1,1
+access_admin_library_item,access_admin_library_item,model_library_donation_item,,1,1,1,1

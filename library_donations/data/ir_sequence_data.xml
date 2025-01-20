@@ -1,0 +1,9 @@
+<odoo>
+    <record id="seq_library_donation" model="ir.sequence">
+        <field name="name">Secuencia para Donaciones</field>
+        <field name="code">library.donation</field>
+        <field name="prefix">DON-</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+    </record>
+</odoo>
