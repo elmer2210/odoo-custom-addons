@@ -91,29 +91,55 @@ class LibraryDonation(models.Model):
             record.state = 'reviewed'
 
     def action_approve(self):
-        """Cambiar el estado a 'Aprobado'."""
+        """Cambia el estado a 'Aprobado' y genera el reporte."""
         for record in self:
-            record.state = 'approved'
-            record._generate_donation_report()
-
-    def _generate_donation_report(self):
-        """Genera el reporte PDF y lo adjunta al registro."""
-        try:
-            _logger.debug("Iniciando generación del reporte para donación: %s", self.name)
+            _logger.debug("Generando reporte para: %s", self.name)
             report_service = self.env.ref('library_donations.report_donation')
+            _logger.debug("Servicio de reporte: %s", report_service)
+            id=[record.id]
+            pdf_content, _ = report_service._render_qweb_pdf(id)
+            _logger.debug("Contenido del PDF generado: %s", pdf_content[:100]) 
 
-            if not report_service:
-                raise UserError("El servicio del reporte no está configurado correctamente.")
-
-            pdf_content, _ = report_service._render_qweb_pdf(self.ids)
-            _logger.debug("PDF generado con éxito.")
-
-            pdf_binary = base64.b64encode(pdf_content)
-            self.write({
-                'donation_report': pdf_binary,
-                'donation_report_name': f"Certificado_Donación_{self.name}.pdf",
+            # Crear un adjunto
+            attachment = self.env['ir.attachment'].create({
+                'name': f"Certificado_{record.name}.pdf",
+                'type': 'binary',
+                'datas': base64.b64encode(pdf_content),
+                'res_model': 'library.donation',
+                'res_id': record.id,
+                'mimetype': 'application/pdf',
             })
 
-        except Exception as e:
-            _logger.error("Error al generar el reporte: %s", str(e))
-            raise UserError(f"Error al generar el reporte: {str(e)}")
+            # Mensaje en el registro
+            record.message_post(body="Certificado generado y adjuntado automáticamente.",
+                                attachment_ids=[attachment.id])
+
+            # Cambiar estado a "Aprobado"
+            record.state = 'approved'
+
+    def _generate_donation_report(self):
+        """Genera un PDF de prueba con un reporte QWeb registrado."""
+        
+        _logger.debug("Iniciando la generación del PDF de prueba para la donación: %s", self.name)
+
+        # Obtener el servicio del reporte
+        report_service = self.env.ref('library_donations.report_donation')
+
+        _logger.debug("Servicio del reporte encontrado: %s", report_service)
+
+        # Generar el contenido del reporte
+        pdf = report_service._render_qweb_pdf(self.ids)
+        pdf_binary = base64.b64encode(pdf[0])
+
+        # Guardar el PDF generado en el registro
+        # save pdf as attachment
+        name = "My Attachment"
+        return self.env['ir.attachment'].create({
+            'name': name,
+            'type': 'binary',
+            'datas': pdf_binary,
+            'store_fname': name,
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'application/x-pdf'
+        })
