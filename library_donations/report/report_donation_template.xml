@@ -1,11 +1,53 @@
 <odoo>
     <template id="donation_certificate_template">
-        <t t-call="web.basic_layout">
-            <div class="page">
-               <h1>Reporte de Prueba</h1>
-                <p>Nombre: <t t-esc="custom_data['name'] or 'Sin Nombre'"/></p>
-                <p>Roll: <t t-esc="custom_data['roll'] or 'Sin Roll'"/></p>
-            </div>
+        <t t-call="web.external_layout">
+            <!--t t-set="doc" t-value="docs"-->
+                <div class="page">
+                    <main>
+                        <h2 style="text-align: center;">CERTIFICADO DE DONACIÓN</h2>
+                        <p><strong>Sede:</strong> <t t-esc="o.campus_id.name"/></p>
+                        <p><strong>Carrera:</strong> <t t-esc="o.career_id.name"/></p>
+                        <p><strong>Fecha de Donación:</strong> <t t-esc="o.date"/></p>
+
+                        <h3>Detalles de Factura</h3>
+                        <p><strong>Número de Factura:</strong> <t t-esc="o.name"/></p>
+                        <p><strong>Fecha de Emisión:</strong> <t t-esc="o.invoice_date"/></p>
+                        <p><strong>Costo Total:</strong> <t t-esc="o.total_cost"/></p>
+
+                        <h3>Ítems Donados</h3>
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Autor</th>
+                                    <th>ISBN</th>
+                                    <th>Editorial</th>
+                                    <th>Edición</th>
+                                    <th>Año de Publicación</th>
+                                    <th>Costo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.donation_items" t-as="item">
+                                    <tr>
+                                        <td><t t-esc="item.title"/></td>
+                                        <td><t t-esc="item.author"/></td>
+                                        <td><t t-esc="item.isbn"/></td>
+                                        <td><t t-esc="item.publisher"/></td>
+                                        <td><t t-esc="item.edition"/></td>
+                                        <td><t t-esc="item.publication_year"/></td>
+                                        <td><t t-esc="item.cost"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <p style="text-align: center; margin-top: 50px;">
+                            <strong>Firma Autorizada</strong>
+                        </p>
+                    </main>
+                </div>
+            <!--/t-->
         </t>
     </template>
 </odoo>

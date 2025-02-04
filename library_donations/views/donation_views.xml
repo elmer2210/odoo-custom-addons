@@ -23,9 +23,11 @@
             <form>
               <!-- Encabezado -->
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="requested,reviewed,approved"/>
-                    <button name="action_review" string="Revisar" type="object" class="btn-primary"  invisible="state != 'requested'"/>
-                    <button name="action_approve" string="Aprobar" type="object" class="btn-success" invisible="state != 'reviewed'"/>
+                    <field name="state" widget="statusbar"/>
+                    <button name="action_request" string="Solicitar" type="object" class="btn-primary"  invisible="state != 'draft'"/>
+                    <button name="action_approve" string="Aprobar" type="object" class="btn-success" invisible="state != 'requested'"/>
+                    <button name="action_reject" string="Rechazar" type="object" class="btn-danger" invisible="state != 'requested'"/>
+                    <button name="action_download_certificate" string="Descargar Certificado" type="object" class="btn-info"  invisible="not has_attachment"/>
                 </header>
 
                 <sheet>
@@ -40,7 +42,8 @@
                                 <field name="campus_id" string="Sede"/>
                                 <field name="career_id" string="Carrera"/>
                                 <field name="date" string="Fecha"/>
-                                <field name="donation_report" filename="donation_report_name" readonly="1" widget="binary"/>
+                                <field name="attachment_id" widget="many2onebinary" readonly="1"/>
+                                <field name="has_attachment" invisible="1"/>
                             </group>
                             <group string="Detalles de Factura">
                                 <field name="invoice_pdf" widget="binary" string="Archivo de Factura"/>
@@ -66,7 +69,7 @@
                             </field>
                         </page>
                         <!-- Pestaña para Donación Grupal -->
-                        <page string="Donación Grupal">
+                        <page string="Donadores">
                            <field name="donor_ids">
                                 <tree editable="bottom">
                                     <field name="student_id" string="Cédula"/>

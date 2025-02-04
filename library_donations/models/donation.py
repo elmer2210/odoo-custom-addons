@@ -44,15 +44,16 @@ class LibraryDonation(models.Model):
     invoice_date = fields.Date(string="Fecha de Emisión", required=True)
 
     # Reporte
-    donation_report = fields.Binary(string="Reporte de Donación (PDF)", readonly=True)
-    donation_report_name = fields.Char(string="Nombre del Reporte")
+    attachment_id = fields.Many2one('ir.attachment', string="Certificado PDF", readonly=True)
+    has_attachment = fields.Boolean(string="¿Tiene PDF?", compute="_compute_has_attachment", store=True)
 
     # Estado
     state = fields.Selection([
+        ('draft', 'Borrador'),
         ('requested', 'Solicitado'),
-        ('reviewed', 'Revisado'),
-        ('approved', 'Aprobado')
-    ], string="Estado", default='requested', tracking=True)
+        ('approved', 'Aprobado'),
+        ('rejected', 'Rechazado'),
+    ], default='draft', string="Estado")
 
     @api.model
     def create(self, vals):
@@ -85,61 +86,72 @@ class LibraryDonation(models.Model):
             if existing:
                 raise ValidationError(f"El número de factura '{record.invoice_number}' ya está registrado.")
 
-    def action_review(self):
-        """Cambiar el estado a 'Revisado'."""
+    def action_request(self):
+        """Cambiar el estado a Solicitado."""
         for record in self:
-            record.state = 'reviewed'
+            record.state = 'requested'
 
+    def action_reject(self):
+        """Cambiar el estado a Rechazado."""
+        for record in self:
+            record.state = 'rejected'
+    
     def action_approve(self):
         """Cambia el estado a 'Aprobado' y genera el reporte."""
-        for record in self:
-            _logger.debug("Generando reporte para: %s", self.name)
-            report_service = self.env.ref('library_donations.report_donation')
-            _logger.debug("Servicio de reporte: %s", report_service)
-            id=[record.id]
-            pdf_content, _ = report_service._render_qweb_pdf(id)
-            _logger.debug("Contenido del PDF generado: %s", pdf_content[:100]) 
 
-            # Crear un adjunto
-            attachment = self.env['ir.attachment'].create({
-                'name': f"Certificado_{record.name}.pdf",
-                'type': 'binary',
-                'datas': base64.b64encode(pdf_content),
-                'res_model': 'library.donation',
-                'res_id': record.id,
-                'mimetype': 'application/pdf',
-            })
-
-            # Mensaje en el registro
-            record.message_post(body="Certificado generado y adjuntado automáticamente.",
-                                attachment_ids=[attachment.id])
-
-            # Cambiar estado a "Aprobado"
-            record.state = 'approved'
-
-    def _generate_donation_report(self):
-        """Genera un PDF de prueba con un reporte QWeb registrado."""
+        nombre_archivo = f"Reporte-{self.name}.pdf"
+        self.action_generate_certificate(nombre_archivo)
         
-        _logger.debug("Iniciando la generación del PDF de prueba para la donación: %s", self.name)
 
-        # Obtener el servicio del reporte
-        report_service = self.env.ref('library_donations.report_donation')
+        # Cambiar estado a "Aprobado"
+        self.state = 'approved'
 
-        _logger.debug("Servicio del reporte encontrado: %s", report_service)
+    @api.depends('attachment_id')
+    def _compute_has_attachment(self):
+        """Controla si el certificado tiene un adjunto generado"""
+        for record in self:
+            record.has_attachment = bool(record.attachment_id)
+    
+    def action_generate_certificate(self, nombre_archivo):
+        """Genera el PDF y lo adjunta al registro como archivo adjunto en Odoo"""
+        self.ensure_one()  # Asegura que se ejecuta en un solo registro
 
-        # Generar el contenido del reporte
-        pdf = report_service._render_qweb_pdf(self.ids)
-        pdf_binary = base64.b64encode(pdf[0])
+        # Generar el PDF del reporte
+        pdf_content, _ = self.env['ir.actions.report']._render_qweb_pdf(
+            'library_donations.report_donation',  # External ID de la plantilla
+            self.ids,  # IDs de los registros a generar el reporte
+            data={'o': self}
+        )
+        #pdf_content = report[0]
 
-        # Guardar el PDF generado en el registro
-        # save pdf as attachment
-        name = "My Attachment"
-        return self.env['ir.attachment'].create({
-            'name': name,
+
+        attachment = self.env['ir.attachment'].create({
+            'name': nombre_archivo,
             'type': 'binary',
-            'datas': pdf_binary,
-            'store_fname': name,
+            'datas': base64.b64encode(pdf_content),  # Codificar el contenido en base64
             'res_model': self._name,
             'res_id': self.id,
-            'mimetype': 'application/x-pdf'
+            'mimetype': 'application/pdf'
         })
+
+          # Guardar el adjunto en el campo attachment_id
+        self.attachment_id = attachment.id
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }
+
+    def action_download_certificate(self):
+        """Permite descargar el PDF sin abrir el modelo de attachments"""
+        self.ensure_one()
+        
+        if not self.attachment_id:
+            raise UserError("No hay un certificado generado para este registro.")
+        
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{self.attachment_id.id}?download=true',
+            'target': 'self',
+        }
