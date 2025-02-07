@@ -3,7 +3,7 @@ from odoo import models, fields, api
 class StudentEntry(models.Model):
     _name = 'student.entry'
     _inherit = ['mail.thread']  # Herencia de mail.thread
-    _description = 'Registro de Ingresos de Estudiantes'
+    _description = 'Ingresos de Estudiantes'
     _order = 'entry_time desc'
     
     barcode = fields.Char(string='Código de Barras', required=True, help="Escanee el código de barras del estudiante")

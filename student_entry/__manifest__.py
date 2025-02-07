@@ -10,6 +10,7 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         'views/student_entry_views.xml',
+        'views/student_computer_views.xml',
         'views/actions.xml',
         'views/menus.xml',
         #'views/assets.xml',  # Para cargar archivos JavaScript si es necesario

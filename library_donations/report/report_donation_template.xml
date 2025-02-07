@@ -4,47 +4,78 @@
             <!--t t-set="doc" t-value="docs"-->
                 <div class="page">
                     <main>
-                        <h2 style="text-align: center;">CERTIFICADO DE DONACIÓN</h2>
-                        <p><strong>Sede:</strong> <t t-esc="o.campus_id.name"/></p>
-                        <p><strong>Carrera:</strong> <t t-esc="o.career_id.name"/></p>
-                        <p><strong>Fecha de Donación:</strong> <t t-esc="o.date"/></p>
-
-                        <h3>Detalles de Factura</h3>
-                        <p><strong>Número de Factura:</strong> <t t-esc="o.name"/></p>
-                        <p><strong>Fecha de Emisión:</strong> <t t-esc="o.invoice_date"/></p>
-                        <p><strong>Costo Total:</strong> <t t-esc="o.total_cost"/></p>
-
-                        <h3>Ítems Donados</h3>
-                        <table class="table table-condensed">
+                         <div style="text-align: left; margin-bottom: 20px;">
+                            <h2>CERTIFICADO DE DONACIÓN</h2>
+                            <h4>Universidad Metropolitana del Ecuador</h4>
+                            <h4>Centro de Recursos para el Aprendizaje e Investigación (CRAI)</h4>
+                            <h4>Guayaquil, <t t-esc="o.date.strftime('%d de %B del %Y')"/></h4>
+                        </div>
+                        <p style="text-align: justify;">
+                            <strong>A QUIEN CORRESPONDA:</strong><br/>
+                            Por medio del presente, la Universidad Metropolitana del Ecuador, a través del 
+                            Centro de Recursos para el Aprendizaje y la Investigación (CRAI), extiende el presente 
+                            certificado en reconocimiento a la valiosa contribución de los siguientes estudiantes de
+                            la carera de <t t-esc="o.career_id.description"/>, sede <t t-esc="o.campus_id.description"/>:
+                        </p>
+                        <table class="table" style="width: 100%; border: 1px solid black; border-collapse: collapse;">
                             <thead>
-                                <tr>
-                                    <th>Título</th>
-                                    <th>Autor</th>
-                                    <th>ISBN</th>
-                                    <th>Editorial</th>
-                                    <th>Edición</th>
-                                    <th>Año de Publicación</th>
-                                    <th>Costo</th>
+                                <tr style="background-color: #f2f2f2;">
+                                    <th style="border: 1px solid black; padding: 5px;">N° Cédula</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Nombres completos</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <t t-foreach="o.donation_items" t-as="item">
+                                <t t-foreach="o.donor_ids" t-as="student">
                                     <tr>
-                                        <td><t t-esc="item.title"/></td>
-                                        <td><t t-esc="item.author"/></td>
-                                        <td><t t-esc="item.isbn"/></td>
-                                        <td><t t-esc="item.publisher"/></td>
-                                        <td><t t-esc="item.edition"/></td>
-                                        <td><t t-esc="item.publication_year"/></td>
-                                        <td><t t-esc="item.cost"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="student.student_id"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="student.name"/></td>
                                     </tr>
                                 </t>
                             </tbody>
                         </table>
 
-                        <p style="text-align: center; margin-top: 50px;">
-                            <strong>Firma Autorizada</strong>
+                        <p style="text-align: justify; margin-top: 20px;">
+                            Los estudiantes mencionados han realizado una donación de libros a nuestra biblioteca, 
+                            contribuyendo así al enriquecimiento de nuestro acervo bibliográfico y al acceso al 
+                            conocimiento por parte de la comunidad universitaria.
                         </p>
+
+                        <h5>Libros Donados</h5>
+                        <table class="table" style="width: 100%; border: 1px solid black; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background-color: #f2f2f2;">
+                                    <th style="border: 1px solid black; padding: 5px;">Título</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Autor</th>
+                                    <th style="border: 1px solid black; padding: 5px;">ISBN</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Editorial</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Edición</th>
+                                    <th style="border: 1px solid black; padding: 5px;">Año de Publicación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="o.donation_items" t-as="item">
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="item.title"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="item.author"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="item.isbn"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="item.publisher"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="item.edition"/></td>
+                                        <td style="border: 1px solid black; padding: 5px;"><t t-esc="item.publication_year"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+
+                        <p style="text-align: justify; margin-top: 20px;">
+                            Agradecemos profundamente su valiosa donación y compromiso con la educación.
+                        </p>
+
+                        <div style="text-align: letf; margin-top: 75px;">
+                            <strong>___________________________</strong><br/>
+                            <strong>Ing. Carmen Guerra MSc.</strong><br/>
+                            <span>Directora del Centro de Recursos para el Aprendizaje y la Investigación (CRAI)</span><br/>
+                            <span>Universidad Metropolitana del Ecuador</span>
+                        </div>
                     </main>
                 </div>
             <!--/t-->

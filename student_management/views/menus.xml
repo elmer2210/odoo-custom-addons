@@ -3,7 +3,7 @@
     <!-- Menú principal del módulo -->
     <menuitem id="menu_student_management" name="Gestión de Estudiantes" sequence="10"/>
     <menuitem id="menu_sedes_management" name="Gestión de Sedes" sequence="10"/>
-    <menuitem id="menu_student_entry_management" name="Ingresos" sequence="10"/>
+    <menuitem id="menu_student_entry_management" name="Gestión de Ingresos" sequence="10"/>
 
     <!-- Menús secundarios -->
     <menuitem id="menu_student_profile" name="Perfiles de Estudiantes" parent="menu_student_management" action="action_student_profile"/>
