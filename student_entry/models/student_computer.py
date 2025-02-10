@@ -15,8 +15,18 @@ class StudentEntry(models.Model):
     )
     init_time = fields.Datetime(string='Fecha y Hora de Inicio', default=fields.Datetime.now, required=True)
     finit_time = fields.Datetime(string='Fecha y Hora de Fin')
+    total_time = fields.Char("Tiempo Total de Uso (Horas)", compute="_compute_total_time", store=True)
     campus_id = fields.Many2one('student_management.campus', string='Sede', related='student_id.campus_id', store=True)
     faculty_id = fields.Many2one('student_management.faculty', string='Facultad', related='student_id.faculty_id', store=True)
     career_id = fields.Many2one('student_management.career', string='Carrera', related='student_id.career_id', store=True)
 
-    
+    @api.depends('init_time', 'finit_time')
+    def _compute_total_time(self):
+        for record in self:
+            if record.init_time and record.finit_time:
+                delta = record.finit_time - record.init_time
+                hours, remainder = divmod(delta.total_seconds(), 3600)
+                minutes = remainder // 60
+                record.total_time = f"0{int(hours)}:{int(minutes)}"
+        else:
+            record.total_time = "00:00"
