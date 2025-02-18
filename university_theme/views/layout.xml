@@ -1,0 +1,14 @@
+<odoo>
+    <data>
+        <record id="custom_backend_home" model="ir.ui.view">
+            <field name="name">Personalizar Página de Inicio del Backend</field>
+            <field name="type">qweb</field>
+            <field name="inherit_id" ref="web.webclient_bootstrap"/>
+            <field name="arch" type="xml">
+                <xpath expr="//t[@t-call='web.layout']" position="inside">
+                    <t t-call="web.custom_dashboard"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

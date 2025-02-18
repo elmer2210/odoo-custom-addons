@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_student_computer_tree" model="ir.ui.view">
+        <field name="name">library.computer.tree</field>
+        <field name="model">library.computer</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="init_time"/>
+                <field name="finit_time"/>
+                <field name="total_time"/>
+                <field name="numberID"/>
+                <field name="student_id"/>
+                <field name="career_id"/>
+                <field name="faculty_id"/>
+                <field name="campus_id"/>
+            </tree>
+        </field>
+    </record>
+</odoo>

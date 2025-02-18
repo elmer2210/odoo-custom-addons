@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_university_faculty_admin,Acceso Admin a Facultades,model_university_faculty,university_security.group_university_admin,1,1,1,1
+access_university_career_admin,Acceso Admin a Carreras,model_university_career,university_security.group_university_admin,1,1,1,1
+access_university_campus_admin,Acceso Admin a Campus,model_university_campus,university_security.group_university_admin,1,1,1,1
+access_students_profile_admin,Acceso Admin a Perfil de Estudiantes,model_student_profile,university_security.group_university_admin,1,1,1,1
+access_student_disability_admin,Acceso Admin a Tipos de Dicapacidad,model_student_disability,university_security.group_university_admin,1,1,1,1
+access_library_computer_admin,Acceso Admin a Computadoras,model_library_computer,university_security.group_university_admin,1,1,1,1
+access_library_cubicle_admin,Acceso Admin a Cubiculos,mode_library_cubicle,university_security.group_university_admin,1,1,1,1
+access_library_entry_admin,Acceso Admin a Entrada de Estudiantes,model_library_entry,university_security.group_university_admin,1,1,1,1
+access_library_loan_admin,Acceso Admin a Registro de Ingresos,model_library_loan,university_security.group_university_admin,1,1,1,1
+access_library_donation,Acceso Admin a Donaciones,model_library_donation,university_security.group_university_admin,1,1,1,1

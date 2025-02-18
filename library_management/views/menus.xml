@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <menuitem id="menu_library_management" name="Gestión Biblioteca" sequence="1"/>
+
+    <menuitem id="menu_library_cubicle" name="Cubículos" sequence="30"/>
+
+
+    <!-- Menú para Registrar Ingresos -->
+    <menuitem id="menu_library_entry" 
+        name="Ingresos Estudiantes" 
+        parent="menu_library_management" 
+        action="action_student_entry"
+        sequence="10"
+    />
+
+    <menuitem id="menu_library_computer" 
+        name="Uso Equipos" 
+        parent="menu_library_management" 
+        action="action_student_computer"
+        sequence="20"
+    />
+
+    <!--Menu para donaciones de libros-->
+    <menuitem id="menu_library_donations" 
+     name="Donaciones" 
+     parent="menu_library_management" 
+     action="action_library_donation" 
+     sequence="21"/>
+
+    <!-- Menús secundarios -->
+    <menuitem id="menu_library_cubicles" 
+    name="Cubículos" 
+    parent="menu_library_cubicle" 
+    action="action_library_cubicle" 
+    sequence="40"/>
+
+    <menuitem id="menu_library_loans" 
+    name="Préstamos/Reservas" 
+    parent="menu_library_cubicle" 
+    action="action_library_loan" 
+    sequence="41"/>
+
+    <!-- menú para ver/crear las Reservas en el Calendario -->
+    <menuitem id="menu_library_reservation_calendar" 
+    name="Calendario" 
+    parent="menu_library_cubicle" 
+    action="action_library_reservation_calendar" 
+    sequence="42"/>
+    
+</odoo>

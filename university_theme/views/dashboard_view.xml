@@ -1,0 +1,39 @@
+<odoo>
+    <data>
+         <!-- Definir la Acción de Cliente -->
+        <record id="custom_dashboard_action" model="ir.actions.client">
+            <field name="name">Escritorio</field>
+            <field name="tag">custom_dashboard</field>
+        </record>
+
+        <!-- Menú que activa la acción -->
+        <record id="menu_dashboard" model="ir.ui.menu">
+            <field name="name">Escritorio</field>
+            <field name="sequence">1</field>
+            <field name="action" ref="custom_dashboard_action"/>
+            <field name="parent_id" eval="False"/> <!-- Se asegura que es menú principal -->
+        </record>
+
+        <record id="custom_dashboard_view" model="ir.ui.view">
+            <field name="name">Escritorio de Aplicaciones</field>
+            <field name="type">qweb</field>
+            <field name="key">web.custom_dashboard</field>  <!-- Se registra la vista -->
+            <field name="arch" type="xml">
+                <t t-name="web.custom_dashboard">
+                    <section class="o_apps_dashboard">
+                        <div class="o_apps_container">
+                            <t t-foreach="request.env['ir.ui.menu'].sudo().search([('parent_id', '=', False), ('web_icon_data', '!=', False)])" t-as="app">
+                                <div class="o_app_card">
+                                    <a t-att-href="'/web#menu_id=%s' % app.id">
+                                        <img t-att-src="'/web/image?model=ir.ui.menu&amp;id=%s&amp;field=web_icon_data' % app.id" class="app-icon"/>
+                                        <p class="app-name"><t t-esc="app.name"/></p>
+                                    </a>
+                                </div>
+                            </t>
+                        </div>
+                    </section>
+                </t>
+            </field>
+        </record>
+    </data>
+</odoo>

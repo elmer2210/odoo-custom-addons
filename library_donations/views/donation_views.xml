@@ -86,11 +86,4 @@
             </form>
         </field>
     </record>
-    
-    <!-- Action -->
-    <record id="action_library_donation" model="ir.actions.act_window">
-        <field name="name">Gestión de donaciones</field>
-        <field name="res_model">library.donation</field>
-        <field name="view_mode">tree,form</field>
-    </record>
 </odoo>

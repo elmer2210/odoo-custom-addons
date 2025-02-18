@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Acción para Perfiles de Estudiantes -->
+    <record id="action_student_profile" model="ir.actions.act_window">
+        <field name="name">Perfiles de Estudiantes</field>
+        <field name="res_model">student.profile</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Acción para Tipos de Discapacidad -->
+    <record id="action_student_disability_type" model="ir.actions.act_window">
+        <field name="name">Tipos de Discapacidad</field>
+        <field name="res_model">student.disabilit</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+</odoo>
