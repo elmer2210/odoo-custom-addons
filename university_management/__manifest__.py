@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "university_management",
+    'name': "Gestión Universidad",
 
     'summary': "Administración de la Universidad",
 
