@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "university_students",
+    'name': "Gestión Estudiantes",
 
     'summary': "Short (1 phrase/line) summary of the module's purpose",
 
@@ -18,14 +18,14 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['university_management','university_security','notif_utils'],
+    'depends': ['university_management','notif_utils'],
 
     # always loaded
     'data': [
         #'security/ir.model.access.csv',
         'views/student_profile_views.xml',
         'views/disability_type_views.xml',
-        'viwes/actions.xml',
+        'views/actions.xml',
         'views/menus.xml'
     ],
 }

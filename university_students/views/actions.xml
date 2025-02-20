@@ -10,7 +10,7 @@
     <!-- Acción para Tipos de Discapacidad -->
     <record id="action_student_disability_type" model="ir.actions.act_window">
         <field name="name">Tipos de Discapacidad</field>
-        <field name="res_model">student.disabilit</field>
+        <field name="res_model">student.disability</field>
         <field name="view_mode">tree,form</field>
     </record>
 </odoo>

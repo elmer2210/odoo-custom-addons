@@ -1,7 +1,7 @@
 from odoo import models, fields
 
 class Career(models.Model):
-    _name = 'university..career'
+    _name = 'university.career'
     _description = 'Carrera'
 
     name = fields.Char(string='Nombre de la Carrera', required=True)

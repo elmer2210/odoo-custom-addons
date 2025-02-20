@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 {
-    'name': "library_management",
+    'name': "Gestion Biblioteca",
 
     'summary': "Administración de procesos de la biblioteca",
 
@@ -18,14 +18,14 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'university_management', 'library_donations', 'university_security','notif_utils'],
+    'depends': ['base', 'university_management','notif_utils'],
 
     # always loaded
     'data': [
         #'security/ir.model.access.csv',
         #'security/library_rules.xml',
         'views/library_cubicle_views.xml',
-        'views/library_kanban_views.xml',
+        'views/library_kanban_view.xml',
         'views/library_loan_views.xml',
         'views/library_reservation_view.xml',
         'views/library_computer_views.xml',

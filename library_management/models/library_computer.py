@@ -8,7 +8,7 @@ class StudentEntry(models.Model):
     numberID = fields.Char(string='Número de cédula', required=True, help="Ingrese el número de cédula")
     email = fields.Char(string='Correo Electrónico', required=True, help="Ingrese el correo electrónico")
     student_id = fields.Many2one(
-        'university_students.student_profile',
+        'student.profile',
         string='Estudiante',
         readonly=True,
         store=True,
@@ -16,9 +16,9 @@ class StudentEntry(models.Model):
     init_time = fields.Datetime(string='Fecha y Hora de Inicio', default=fields.Datetime.now, required=True)
     finit_time = fields.Datetime(string='Fecha y Hora de Fin')
     total_time = fields.Char("Tiempo Total de Uso (Horas)", compute="_compute_total_time", store=True)
-    campus_id = fields.Many2one('university_students.campus', string='Sede', related='student_id.campus_id', store=True)
-    faculty_id = fields.Many2one('university_students.faculty', string='Facultad', related='student_id.faculty_id', store=True)
-    career_id = fields.Many2one('university_students.career', string='Carrera', related='student_id.career_id', store=True)
+    campus_id = fields.Many2one('university.campus', string='Sede', related='student_id.campus_id', store=True)
+    faculty_id = fields.Many2one('university.faculty', string='Facultad', related='student_id.faculty_id', store=True)
+    career_id = fields.Many2one('university.career', string='Carrera', related='student_id.career_id', store=True)
 
     @api.depends('init_time', 'finit_time')
     def _compute_total_time(self):

@@ -18,7 +18,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','university_security','notif_utils'],
+    'depends': ['base','notif_utils'],
 
     # always loaded
     'data': [
@@ -27,7 +27,7 @@
         'views/campus_views.xml',
         'views/career_views.xml',
         'views/faculty_views.xml',
-        'views/res_users_views.xml'
+        'views/res_users_view.xml',
         'views/actions.xml',
         'views/menus.xml',
     ],

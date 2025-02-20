@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <!-- Menú principal del módulo -->
-    <menuitem id="menu_student_management" name="Gestión Estudiantes" parent="menu_university" sequence="9"/>
+    <menuitem id="menu_student_management" name="Gestión Estudiantes" parent="university_management.menu_university" sequence="9"/>
 
     <!-- Menús secundarios -->
     <menuitem id="menu_student_profile" name="Perfiles de Estudiantes" parent="menu_student_management" action="action_student_profile"/>

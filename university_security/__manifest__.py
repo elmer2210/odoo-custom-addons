@@ -18,13 +18,14 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'university_management','university_students','library_donations','library_management'],
 
     # always loaded
     'data': [
-        # 'security/ir.model.access.csv',
-        'views/views.xml',
-        'views/templates.xml',
+        'security/university_security.xml',
+        #'security/library_rules.xml',
+        'security/ir.model.access.csv',
+
     ],
     # only loaded in demonstration mode
     'demo': [

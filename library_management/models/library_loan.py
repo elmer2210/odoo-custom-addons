@@ -15,7 +15,7 @@ class LibraryLoan(models.Model):
                                  domain=lambda self: [('campus_id', '=', self.env.user.campus_id.id)]
                                 )
     user_id = fields.Many2one('res.users', string='Bibliotecario', default=lambda self: self.env.user, readonly=True)
-    student_name = fields.Char(related='student_id.name', string='Nombres del Estudiante', readonly=True)
+    student_name = fields.Char(related='student_id.completename', string='Nombres del Estudiante', readonly=True)
     start_time = fields.Datetime(string='Fecha y Hora de Inicio', default=fields.Datetime.now, required=True)
     end_time = fields.Datetime(string='Fecha y Hora de Fin', compute='_compute_end_time', store=True)
     state = fields.Selection([

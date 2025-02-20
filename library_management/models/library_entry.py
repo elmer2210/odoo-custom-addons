@@ -8,20 +8,20 @@ class StudentEntry(models.Model):
     
     barcode = fields.Char(string='Código de Barras', required=True, help="Escanee el código de barras del estudiante")
     student_id = fields.Many2one(
-        'university_students.student_profile',
+        'student.profile',
         string='Estudiante',
         readonly=True,
         store=True,
     )
     entry_time = fields.Datetime(string='Fecha y Hora de Ingreso', default=fields.Datetime.now, required=True)
-    campus_id = fields.Many2one('university_students.campus', string='Sede', related='student_id.campus_id', store=True)
-    faculty_id = fields.Many2one('university_students.faculty', string='Facultad', related='student_id.faculty_id', store=True)
-    career_id = fields.Many2one('university_students.career', string='Carrera', related='student_id.career_id', store=True)
+    campus_id = fields.Many2one('university.campus', string='Sede', related='student_id.campus_id', store=True)
+    faculty_id = fields.Many2one('university.faculty', string='Facultad', related='student_id.faculty_id', store=True)
+    career_id = fields.Many2one('university.career', string='Carrera', related='student_id.career_id', store=True)
 
     @api.onchange('barcode')
     def _onchange_barcode(self):
         if self.barcode:
-            student = self.env['university_students.student_profile'].search([('barcode', '=', self.barcode)], limit=1)
+            student = self.env['student.profile'].search([('barcode', '=', self.barcode)], limit=1)
             if student and student.active:
                 self.student_id = student
                 # Registrar el ingreso automáticamente

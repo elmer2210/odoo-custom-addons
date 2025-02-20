@@ -8,4 +8,4 @@ class Faculty(models.Model):
     code = fields.Char(string='Código de la Facultad', required=False)
     description = fields.Text(string='Descripción', required=False)
     #campus_id = fields.Many2one('student_management.campus', string='Sede', required=True)
-    career_ids = fields.One2many('student_management.career', 'faculty_id', string='Carreras')
+    career_ids = fields.One2many('university.career', 'faculty_id', string='Carreras')
