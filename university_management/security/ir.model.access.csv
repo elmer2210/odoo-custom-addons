@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-
+access_university_faculty_admin,university.faculty,model_university_faculty,university_groups_users.group_university_admin,1,1,1,1
+access_university_career_admin,university.career,model_university_career,university_groups_users.group_university_admin,1,1,1,1
+access_university_campus_admin,university.campus,model_university_campus,university_groups_users.group_university_admin,1,1,1,1

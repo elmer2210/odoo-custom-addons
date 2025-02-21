@@ -18,11 +18,11 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','notif_utils'],
+    'depends': ['base','notif_utils','university_groups_users'],
 
     # always loaded
     'data': [
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         #'security/library_rules.xml',
         'views/campus_views.xml',
         'views/career_views.xml',

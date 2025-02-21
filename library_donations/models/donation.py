@@ -19,9 +19,9 @@ class LibraryDonation(models.Model):
     date = fields.Date(string="Fecha de Donación", default=fields.Date.context_today)
 
     # Clasificadores
-    campus_id = fields.Many2one('student_management.campus', string="Sede", required=True)
+    campus_id = fields.Many2one('university.campus', string="Sede", required=True)
     career_id = fields.Many2one(
-        'student_management.career',
+        'university.career',
         string="Carrera",
         required=True,
         domain="[('faculty_id', '=', campus_id)]"
@@ -29,7 +29,7 @@ class LibraryDonation(models.Model):
 
     # Relación con estudiantes
     donor_ids = fields.Many2many(
-        'student_management.student_profile',
+        'student.profile',
         string="Donadores",
         domain="[('campus_id', '=', campus_id), ('career_id', '=', career_id)]"
     )
@@ -59,8 +59,8 @@ class LibraryDonation(models.Model):
     def create(self, vals):
         """Generar automáticamente el código de donación."""
         if 'name' not in vals or not vals['name']:
-            campus = self.env['student_management.campus'].browse(vals['campus_id'])
-            career = self.env['student_management.career'].browse(vals['career_id'])
+            campus = self.env['university.campus'].browse(vals['campus_id'])
+            career = self.env['university.career'].browse(vals['career_id'])
             donation_type = vals.get('donation_type', 'individual')
             seq = self.env['ir.sequence'].next_by_code('library.donation') or '0000'
             vals['name'] = f"{donation_type[:3].upper()}-{campus.name[:3].upper()}-{career.name[:3].upper()}-{seq}"

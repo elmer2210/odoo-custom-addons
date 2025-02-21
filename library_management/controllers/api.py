@@ -32,7 +32,7 @@ class SessionAPI(http.Controller):
         if not student:
             return {"error": "Usuario no encontrado. Verifique su información."}
 
-        session_log = request.env['student_entry.student_computer'].sudo().create({
+        session_log = request.env['library_management.library_computer'].sudo().create({
             'numberID': student_id,
             'email': email,
             'student_id': student.id,
@@ -61,7 +61,7 @@ class SessionAPI(http.Controller):
         if not session_id:
             return {"error": "Falta el `session_id` para actualizar la sesión."}
 
-        session = request.env['student_entry.student_computer'].sudo().search([
+        session = request.env['library_management.library_computer'].sudo().search([
             ('id', '=', session_id)
         ], limit=1)
 

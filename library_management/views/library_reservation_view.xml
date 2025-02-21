@@ -10,7 +10,7 @@
                 color="color" 
                 create="true"
                 quick_create="true"
-                quick_create_view_id="%(library_cubicle_reservations.view_library_loan_form)d"
+                quick_create_view_id="%(library_management.view_library_loan_form)d"
             >
                 <field name="display_name"/>
                 <field name="cubicle_id"/>

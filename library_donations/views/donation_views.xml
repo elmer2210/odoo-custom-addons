@@ -74,7 +74,7 @@
                                 <tree editable="bottom">
                                     <field name="student_id" string="Cédula"/>
                                     <field name="barcode" string="Código de Barras"/>
-                                    <field name="name" string="Nombre Completo"/>
+                                    <field name="completename" string="Nombre Completo"/>
                                     <field name="campus_id" string="Sede"/>
                                     <field name="faculty_id" string="Facultad"/>
                                     <field name="career_id" string="Carrera"/>

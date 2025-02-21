@@ -18,11 +18,11 @@ El presente módulo se encarga de gestionar las donaciones hechas a las bibliote
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','library_mamagement','notif_utils'],
+    'depends': ['base','notif_utils'],
 
     # always loaded
     'data': [
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         'views/donation_views.xml',
     ],
     # only loaded in demonstration mode

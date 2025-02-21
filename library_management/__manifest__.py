@@ -18,11 +18,11 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'university_management','notif_utils'],
+    'depends': ['base', 'university_management','university_','notif_utils', 'mail', 'library_donations'],
 
     # always loaded
     'data': [
-        #'security/ir.model.access.csv',
+        'security/ir.model.access.csv',
         #'security/library_rules.xml',
         'views/library_cubicle_views.xml',
         'views/library_kanban_view.xml',
