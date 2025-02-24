@@ -25,17 +25,19 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group string="Información Personal">
-                        <field name="barcode"/>
-                        <field name="student_id"/>
-                        <field name="names"/>
-                        <field name="lastnames"/>
-                        <field name="email"/>
-                    </group>
-                    <group string="Información Académica">
-                        <field name="campus_id"/>
-                        <field name="faculty_id"/>
-                        <field name="career_id"/>
+                    <group>
+                        <group string="Información Personal">
+                            <field name="barcode"/>
+                            <field name="student_id"/>
+                            <field name="names"/>
+                            <field name="lastnames"/>
+                            <field name="email"/>
+                        </group>
+                        <group string="Información Académica">
+                            <field name="campus_id"/>
+                            <field name="faculty_id"/>
+                            <field name="career_id"/>
+                        </group>
                     </group>
                     <group string="Información Adicional">
                         <field name="has_disability"/>

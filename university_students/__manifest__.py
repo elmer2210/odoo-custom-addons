@@ -18,7 +18,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['university_management','notif_utils'],
+    'depends': ['university_management','notif_utils', 'university_groups_users'],
 
     # always loaded
     'data': [

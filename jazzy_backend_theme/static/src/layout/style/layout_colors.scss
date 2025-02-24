@@ -12,19 +12,19 @@ $light_hover: var(--light-hover) !important;
 $fullscreen-bg-color: var(--fullscreen-bg-color) !important;
 
 :root{
-    --primary-accent: #004589 ;
-    --primary-accent-border: #ffffff;
-    --app-bar-accent: #ffffff;
-    --full-screen-bg: url(/jazzy_backend_theme/static/src/img/background.jpg) ;
+    --primary-accent: #009AA6;
+    --primary-accent-border: #37424A;
+    --app-bar-accent: #009AA6;
+    --full-screen-bg: url(/jazzy_backend_theme/static/src/img/background.png) ;
     --kanban-bg-color:#f7f7f7;
     --o-kanban-color-border-width: 8px !important;
-    --selected-row: #ffffff !important;
-    --app-menu-font-color:#ffffff;
+    --selected-row: #37424A !important;
+    --app-menu-font-color:#37424A;
     --bg-white: #ffffff !important;
-    --f-color: #555b6d !important;
+    --f-color: #37424A !important;
     --color-white : #ffffff !important;
-    --primary-hover: #00376e;
+    --primary-hover: #009AA6;
     --light-hover: #d5d5d5 ;
-    --secondary-hover:#ffffff;
+    --secondary-hover:#37424A;
     --fullscreen-bg-color: #C5F0FC !important;
 }

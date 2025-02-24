@@ -36,7 +36,7 @@ class StudentEntry(models.Model):
                     'simple_notification',
                     {
                         'title': 'Registro Exitoso',
-                        'message': f'Ingreso registrado correctamente para el estudiante: {student.name}',
+                        'message': f'Ingreso registrado correctamente para el estudiante: {student.completename}',
                         'sticky': False,  # False hará que la notificación desaparezca automáticamente
                         'type': 'success',
                     }

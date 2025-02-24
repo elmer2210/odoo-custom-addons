@@ -22,7 +22,7 @@
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"
-                                         style="background:none;border:none;color:white;font-size:1.5rem;">
+                                         style="background:none;border:none;color:rgb(55,66,74);font-size:1.5rem;">
                                         <i class="fa fa-search"/>
                                     </div>
                                 </div>

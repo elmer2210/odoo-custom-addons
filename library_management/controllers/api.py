@@ -24,7 +24,7 @@ class SessionAPI(http.Controller):
         if not student_id or not email:
             return {"error": "Faltan datos. Se requiere número de cédula y correo electrónico."}
 
-        student = request.env['student_management.student_profile'].sudo().search([
+        student = request.env['student.profile'].sudo().search([
             ('student_id', '=',student_id),
             ('email', '=', email)
         ], limit=1)
@@ -32,7 +32,7 @@ class SessionAPI(http.Controller):
         if not student:
             return {"error": "Usuario no encontrado. Verifique su información."}
 
-        session_log = request.env['library_management.library_computer'].sudo().create({
+        session_log = request.env['library.computer'].sudo().create({
             'numberID': student_id,
             'email': email,
             'student_id': student.id,
@@ -61,7 +61,7 @@ class SessionAPI(http.Controller):
         if not session_id:
             return {"error": "Falta el `session_id` para actualizar la sesión."}
 
-        session = request.env['library_management.library_computer'].sudo().search([
+        session = request.env['library.computer'].sudo().search([
             ('id', '=', session_id)
         ], limit=1)
 

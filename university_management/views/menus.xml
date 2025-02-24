@@ -5,7 +5,7 @@
     
 
     <!-- Menús secundarios -->
-    <menuitem id="menu_university_management" name="Gestión Universidad" sequence="10"/>
+    <menuitem id="menu_university_management"  parent="menu_university" name="Gestión Universidad" sequence="10"/>
     <menuitem id="menu_campus" name="Sedes" parent="menu_university_management" action="action_campus" sequence="15"/>
     <menuitem id="menu_faculty" name="Facultades" parent="menu_university_management" action="action_faculty" sequence="20"/>
     <menuitem id="menu_career" name="Carreras" parent="menu_university_management" action="action_career" sequence="25"/>

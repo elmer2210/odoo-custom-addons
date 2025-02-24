@@ -42,7 +42,7 @@ class LibraryLoan(models.Model):
     @api.depends('student_id', 'cubicle_id')
     def _compute_display_name(self):
         for record in self:
-            student_name = record.student_id.name if record.student_id else 'Sin Estudiante'
+            student_name = record.student_id.completename if record.student_id else 'Sin Estudiante'
             cubicle_name = record.cubicle_id.name if record.cubicle_id else 'Sin Cubículo'
             record.display_name = f'{student_name} - {cubicle_name}'
 
@@ -125,7 +125,7 @@ class LibraryLoan(models.Model):
         # Notificamos la acción de creación exitosa.
         loan.send_notification(
             title='Préstamo/Reserva exitoso',
-            message=f'El cubículo ({cubicle.name}) fue prestado o reservado exitosamente a ({loan.student_id.name}).',
+            message=f'El cubículo ({cubicle.name}) fue prestado o reservado exitosamente a ({loan.student_id.completename}).',
             sticky=False,
             msg_type='success',
         )
@@ -163,7 +163,7 @@ class LibraryLoan(models.Model):
         loans = self.search([('end_time', '<=', warning_time), ('state', '=', 'active')])
         for loan in loans:
             loan.user_id.notify_info(
-                message=f'El préstamo del cubículo {loan.cubicle_id.name} para el estudiante {loan.student_id.name} está próximo a vencer.',
+                message=f'El préstamo del cubículo {loan.cubicle_id.name} para el estudiante {loan.student_id.completename} está próximo a vencer.',
                 title='Aviso de Préstamo Próximo a Vencer',
             )
 
@@ -175,6 +175,6 @@ class LibraryLoan(models.Model):
         for loan in overdue_loans:
             loan.state = 'overdue'
             loan.user_id.notify_warning(
-                message=f'El préstamo del cubículo {loan.cubicle_id.name} para el estudiante {loan.student_id.name} ha vencido. Por favor, contacte al estudiante para la devolución.',
+                message=f'El préstamo del cubículo {loan.cubicle_id.name} para el estudiante {loan.student_id.completename} ha vencido. Por favor, contacte al estudiante para la devolución.',
                 title='Aviso de Préstamo Vencido',
             )
