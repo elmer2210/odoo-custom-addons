@@ -50,6 +50,7 @@
                                    t-att-title="app.name"
                                    style="width: 70px !important;height: 70px !important;margin: 5px 5px 5px 5px;"
                                    t-attf-src="data:image/svg+xml;base64,{{app.webIconData}}"/>
+                                
                               <b class="a_app_menu_title"
                                  style="color:white;text-shadow: 1px 1px 1px rgb(0 0 0 / 40%);"><t t-esc="app.name"/></b>
                          </a>
@@ -71,7 +72,7 @@
                onclick="$('.o_menu_sections').css('display','flex');$('.search-results').addClass('o_hidden');$('.o_menu_brand').css('display','flex');$('.app_components').css('display','none'); $('.app-menu').removeClass('o_hidden'); $('.search-input input').val('');$('.o_action_manager').attr('style','display: block !important');$('.sidebar_panel').attr('style','display: block !important');"/>
         </t>
     </t>
-    <!--  To show the sidebar to select the apps from the sidebar  -->
+    <!--  To show the sidebar to select the apps from the sidebar -->
     <t t-inherit="web.NavBar" t-inherit-mode="extension" owl="1">
         <xpath expr="//nav[hasclass('o_main_navbar')]" position="after">
             <div class="sidebar_panel" id="sidebar_panel">

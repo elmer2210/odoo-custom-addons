@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <!-- Menú principal del módulo -->
-    <menuitem id="menu_university" name="Universidad" sequence="8"/>
+    <menuitem id="menu_university" 
+    name="Universidad" 
+    web_icon="university_management,static/description/icon.png"
+    sequence="8"/>
     
 
     <!-- Menús secundarios -->

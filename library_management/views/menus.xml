@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-    <menuitem id="menu_library_management" name="Gestión Biblioteca" sequence="1"/>
+    <menuitem id="menu_library_management" name="Gestión Biblioteca" web_icon="library_management,static/description/icon.png" sequence="9" />
 
     <menuitem id="menu_library_cubicle" 
         parent="menu_library_management" 
