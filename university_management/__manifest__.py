@@ -15,7 +15,7 @@
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'University',
-    'version': '0.1',
+    'version': '17.0.1.0.0',
 
     # any module necessary for this one to work correctly
     'depends': ['base','notif_utils','university_groups_users'],
@@ -27,7 +27,7 @@
         'views/campus_views.xml',
         'views/career_views.xml',
         'views/faculty_views.xml',
-        'views/res_users_view.xml',
+        #'views/res_users_view.xml',
         'views/actions.xml',
         'views/menus.xml',
     ],
@@ -37,5 +37,6 @@
     ],
     'installable': True,
     'application': True,
+    'license': 'LGPL-3',
 }
 

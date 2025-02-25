@@ -29,5 +29,9 @@ El presente módulo se encarga de gestionar las donaciones hechas a las bibliote
     'demo': [
         'demo/demo.xml',
     ],
+    'license': 'LGPL-3',
+    'installable': True,
+    'auto_install': False,
+    'application': False,
 }
 
