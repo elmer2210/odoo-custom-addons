@@ -1,5 +1,5 @@
 #wrapwrap > main {
-    background: #f8f8fb;
+    background: #37424A;
 }
 .navbar {
     background: #fff !important;
@@ -25,15 +25,15 @@ body.bg-100 {
     flex-wrap: w
 }
 a {
-    color: #556ee6;
+    color: #009AA6;
     text-decoration: none;
 }
 a:hover {
-    color: #4458b8;
+    color: #ccdc00;
     text-decoration: underline;
 }
 .alert-info {
-    color: #306391;
+    color: #009AA6;
     background-color: #dcedfc;
     border-color: #cbe4fb;
 }
@@ -48,29 +48,38 @@ a:hover {
 // Login button starts
 .btn-primary {
     color: #fff;
-    background-color: #556ee6;
-    border-color: #556ee6;
+    background-color: #009AA6;
+    border-color: #00909b;
 }
 .btn-primary:hover {
     color: #fff;
-    background-color: #485ec4;
-    border-color: #4458b8;
+    background-color: #ccdc00;
+    border-color: #b7c401;
 }
 .btn-check:active+.btn-primary,
 .btn-check:checked+.btn-primary,
 .btn-primary.active,.btn-primary:active,
 .show>.btn-primary.dropdown-toggle {
     color: #fff;
-    background-color: #4458b8 !important;
-    border-color: #4053ad !important;
+    background-color: #009AA6 !important;
+    border-color: #00909b !important;
 }
 .btn-check:focus+.btn-primary, .btn-primary:focus {
     color: #fff;
-    background-color: #485ec4 !important;
-    border-color: #4458b8 !important;
+    background-color: #ccdc00 !important;
+    border-color: #b7c401 !important;
     -webkit-box-shadow: 0 0 0 .15rem rgba(111,132,234,.5) !important;
     box-shadow: 0 0 0 .15rem rgba(111,132,234,.5) !important;
 }
+
+.btn-fill-primary, .btn-primary{
+    background-color: #009AA6 !important;
+    border-color: #00909b !important;
+    color: #FFFFFF !important;
+    opacity: 0.8; /* Para darle un ligero efecto de "deshabilitado" */
+    cursor: not-allowed; /* Cambia el cursor a no permitido */
+}
+
 .oe_login_form .btn {
     display: inline-block;
     cursor: pointer;
@@ -87,18 +96,19 @@ a:hover {
 }
 .btn-secondary {
     color: #fff !important;
-    background-color: #74788d !important;
-    border-color: #74788d !important;
+    background-color: #7d858c !important;
+    border-color: #7d858c !important;
 }
 .btn-secondary:hover {
     color: #fff !important;
-    background-color: #636678 !important;
-    border-color: #5d6071 !important;
+    background-color: #7d858c !important;
+    border-color: #7d858c !important;
+    transition: all 0.3s;
 }
 .btn-secondary:active {
     color: #fff;
-    background-color: #5d6071 !important;
-    border-color: #575a6a !important;
+    background-color: #7d858c !important;
+    border-color: #7d858c !important;
 }
 .btn-secondary i,.btn-secondary span {
     color: #fff !important;
