@@ -18,11 +18,13 @@ El presente módulo se encarga de gestionar las donaciones hechas a las bibliote
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','notif_utils','university_groups_users','university_students'],
+    'depends': ['base','notif_utils','university_groups_users','university_students', 'mail'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'report/report_donation.xml',
+        'report/report_donation_template.xml',
         'views/donation_views.xml',
         'data/donation_email_template.xml',
         'data/ir_sequence_data.xml',

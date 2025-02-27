@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError, UserError
 import base64
 import logging
@@ -9,7 +9,7 @@ _logger = logging.getLogger(__name__)
 class LibraryDonation(models.Model):
     _name = 'library.donation'
     _description = 'Gestión de Donaciones'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string="Código de Donación", readonly=True, copy=False)
     donation_type = fields.Selection([
@@ -53,7 +53,7 @@ class LibraryDonation(models.Model):
         ('requested', 'Solicitado'),
         ('approved', 'Aprobado'),
         ('rejected', 'Rechazado'),
-    ], default='draft', string="Estado")
+    ], default='draft', string="Estado", tracking=True)
 
     @api.model
     def create(self, vals):
@@ -63,7 +63,7 @@ class LibraryDonation(models.Model):
             career = self.env['university.career'].browse(vals['career_id'])
             donation_type = vals.get('donation_type', 'individual')
             seq = self.env['ir.sequence'].next_by_code('library.donation') or '0000'
-            vals['name'] = f"{donation_type[:3].upper()}-{campus.name[:3].upper()}-{career.name[:3].upper()}-{seq}"
+            vals['name'] = f"{donation_type[:3].upper()}-{campus.description[:4].upper()}-{career.name[:3].upper()}-{seq}"
         return super(LibraryDonation, self).create(vals)
     
     @api.constrains('name')
@@ -85,19 +85,42 @@ class LibraryDonation(models.Model):
             existing = self.search([('invoice_number', '=', record.invoice_number), ('id', '!=', record.id)])
             if existing:
                 raise ValidationError(f"El número de factura '{record.invoice_number}' ya está registrado.")
+            
+    def get_donation_approver_email(self):
+        """Obtiene el correo del aprobador de donaciones usando res.users"""
+        self.ensure_one()
+        approver_user = self.env['res.users'].search([('is_donation_approver', '=', True)], limit=1)
+        
+        if approver_user:
+            return approver_user.email
+        else:
+            return False
+
 
     def action_request(self):
         """Cambiar el estado a Solicitado."""
-        for record in self:
+        self.ensure_one()
+        if self.state == 'draft':
+            self.state = 'requested'
+            self.message_post(body=_("La donación ha sido solicitada."), subtype_xmlid="mail.mt_comment")
+
+             # Enviar correo de notificación
             template = self.env.ref('library_donations.email_template_donation_approval')
-            if template  and record.get_donation_approver_email():
-                template.send_mail(record.id, force_send=True)
-            record.state = 'requested'
+            if template:
+                template.send_mail(self.id, force_send=True)
+                self.message_post(body=_("Correo de notificación enviado al aprobador de donaciones."),
+                              message_type='notification',
+                              subtype_xmlid="mail.mt_note")
+                _logger.info("Correo de notificación enviado al encargado de donaciones.")
+            else:
+                _logger.error("No se encontró la plantilla de correo para notificación.")
 
     def action_reject(self):
         """Cambiar el estado a Rechazado."""
-        for record in self:
-            record.state = 'rejected'
+        self.ensure_one()
+        if self.state == 'requested':
+            self.state = 'rejected'
+            self.message_post(body=_("La donación ha sido rechazada."), subtype_xmlid="mail.mt_comment")
     
     def action_approve(self):
         """Cambia el estado a 'Aprobado' y genera el reporte."""
@@ -105,9 +128,10 @@ class LibraryDonation(models.Model):
         nombre_archivo = f"Reporte-{self.name}.pdf"
         self.action_generate_certificate(nombre_archivo)
         
-
-        # Cambiar estado a "Aprobado"
-        self.state = 'approved'
+        self.ensure_one()
+        if self.state == 'requested':
+            self.state = 'approved'
+            self.message_post(body=_("La donación ha sido aprobada."), subtype_xmlid="mail.mt_comment")
 
     @api.depends('attachment_id')
     def _compute_has_attachment(self):
@@ -158,8 +182,3 @@ class LibraryDonation(models.Model):
             'url': f'/web/content/{self.attachment_id.id}?download=true',
             'target': 'self',
         }
-    ##Metodo para conseguir el correo del aprovador de donaciones
-    def get_donation_approver_email(self):
-        """Obtiene el correo del aprobador de donaciones"""
-        approver = self.env['res.users'].search([('is_donation_approver', '=', True)], limit=1)
-        return approver.email if approver else False
