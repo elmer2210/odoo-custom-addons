@@ -30,7 +30,7 @@
                                        autocomplete="off"
                                        placeholder="Search menus..."
                                        class="form-control"
-                                       style="background:none;border:none;color:white;"/>
+                                       style="background:none;border:none;color:#37424A;"/>
                             </div>
                     </div>
                     <div class="search-results col-md-10 ml-auto mr-auto"

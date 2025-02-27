@@ -24,6 +24,8 @@ El presente módulo se encarga de gestionar las donaciones hechas a las bibliote
     'data': [
         'security/ir.model.access.csv',
         'views/donation_views.xml',
+        'data/donation_email_template.xml',
+        'data/ir_sequence_data.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

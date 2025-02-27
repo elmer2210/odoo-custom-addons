@@ -7,17 +7,8 @@
             <xpath expr="//sheet" position="inside">
                 <group string="Datos adicionales">
                     <field name="campus_id"/>
+                    <field name="is_donation_approver"/>
                 </group>
-            </xpath>
-        </field>
-    </record>
-       <record id="view_users_form_inherit_donation" model="ir.ui.view">
-        <field name="name">res.users.form.donation</field>
-        <field name="model">res.users</field>
-        <field name="inherit_id" ref="base.view_users_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//sheet" position="inside">
-                <field name="is_donation_approver"/>
             </xpath>
         </field>
     </record>

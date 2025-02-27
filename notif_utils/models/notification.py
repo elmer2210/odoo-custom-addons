@@ -4,10 +4,11 @@ class NotificationMixin(models.AbstractModel):
     _name = 'notification.mixin'
     _description = 'Mixin for Sending Notifications'
 
-    def send_notification(self, user, title, message, sticky=False, msg_type='info'):
+    def send_notification(self, title, message, sticky=False, msg_type='info'):
         """Envía una notificación emergente al usuario."""
-        self.env['bus.bus'].sendone(
-            (user.id, 'simple_notification'),  # Ahora usamos el ID del usuario directamente
+        self.env['bus.bus']._sendone(
+            self.env.user.partner_id,
+            'simple_notification',  # Ahora usamos el ID del usuario directamente
             {
                 'title': title,
                 'message': message,
@@ -26,4 +27,13 @@ class NotificationMixin(models.AbstractModel):
             'model': 'res.users',  # Se vincula a `res.users` en lugar de `res.partner`
             'res_id': user.id,  # Ahora apunta directamente al usuario
         })
+
+         # Crear la notificación para que aparezca en la bandeja de entrada
+        self.env['mail.notification'].create({
+            'mail_message_id': message.id,
+            'res_partner_id': user.partner_id.id,
+            'notification_type': 'inbox',  # Notificación en bandeja de entrada
+            'is_read': False,
+        })
+
         return message

@@ -27,7 +27,7 @@
         'views/campus_views.xml',
         'views/career_views.xml',
         'views/faculty_views.xml',
-        #'views/res_users_view.xml',
+        'views/res_users_view.xml',
         'views/actions.xml',
         'views/menus.xml',
     ],

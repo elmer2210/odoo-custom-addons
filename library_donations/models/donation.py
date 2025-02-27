@@ -89,6 +89,9 @@ class LibraryDonation(models.Model):
     def action_request(self):
         """Cambiar el estado a Solicitado."""
         for record in self:
+            template = self.env.ref('library_donations.email_template_donation_approval')
+            if template  and record.get_donation_approver_email():
+                template.send_mail(record.id, force_send=True)
             record.state = 'requested'
 
     def action_reject(self):
@@ -155,3 +158,8 @@ class LibraryDonation(models.Model):
             'url': f'/web/content/{self.attachment_id.id}?download=true',
             'target': 'self',
         }
+    ##Metodo para conseguir el correo del aprovador de donaciones
+    def get_donation_approver_email(self):
+        """Obtiene el correo del aprobador de donaciones"""
+        approver = self.env['res.users'].search([('is_donation_approver', '=', True)], limit=1)
+        return approver.email if approver else False

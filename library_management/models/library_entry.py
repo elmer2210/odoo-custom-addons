@@ -2,7 +2,7 @@ from odoo import models, fields, api
 
 class StudentEntry(models.Model):
     _name = 'library.entry'
-    _inherit = ['mail.thread']  # Herencia de mail.thread
+    _inherit = ['notification.mixin']  # Herencia de mail.thread
     _description = 'Ingresos de Estudiantes'
     _order = 'entry_time desc'
     
@@ -31,15 +31,11 @@ class StudentEntry(models.Model):
                     'entry_time': fields.Datetime.now(),
                 })
                  # Mostrar un mensaje como notificación menos intrusiva
-                self.env['bus.bus']._sendone(
-                    self.env.user.partner_id,
-                    'simple_notification',
-                    {
-                        'title': 'Registro Exitoso',
-                        'message': f'Ingreso registrado correctamente para el estudiante: {student.completename}',
-                        'sticky': False,  # False hará que la notificación desaparezca automáticamente
-                        'type': 'success',
-                    }
+                self.send_notification(
+                    title= 'Registro Exitoso',
+                    message= f'Ingreso registrado correctamente para el estudiante: {student.completename}',
+                    sticky= False,  # False hará que la notificación desaparezca automáticamente
+                    msg_type='success'
                 )
                 # Vaciar el campo de código de barras después del registro
                 self.barcode = ''
@@ -48,25 +44,17 @@ class StudentEntry(models.Model):
                 admin_user = self.env.ref('base.user_admin')  # Obtener el usuario administrador (predeterminado)
                 subject = 'Error en el registro de ingreso de estudiante'
                 body = f'El estudiante con el código de barras {self.barcode} no existe o está inactivo. Por favor, verifica este incidente.'
-
+                self.send_notification(
+                    title= 'Problemas con el código de barras',
+                    message=  f'El código de barras {self.barcode} no existe o estudiante inactivo',
+                    sticky= False,  # False hará que la notificación desaparezca automáticamente
+                    msg_type='danger'
+                )
                  # Crear el mensaje usando mail.message.create()
-                self.env['mail.message'].create({
-                    'subject': subject,
-                    'body': body,
-                    'message_type': 'notification',
-                    'subtype_id': self.env.ref('mail.mt_comment').id,
-                    'partner_ids': [(4, admin_user.partner_id.id)],
-                })
-
-                self.env['bus.bus']._sendone(
-                    self.env.user.partner_id,
-                    'simple_notification',
-                    {
-                        'title': 'Problemas con el código de barras',
-                        'message': f'El código de barras {self.barcode} no existe o estudiante inactivo',
-                        'sticky': False,  # False hará que la notificación desaparezca automáticamente
-                        'type': 'danger',
-                    }
+                self.send_message(
+                    admin_user,
+                    body=body,
+                    subject=subject
                 )
                 # Vaciar el campo de código de barras después del registro
                 self.barcode = ''
