@@ -24,7 +24,7 @@
               <!-- Encabezado -->
                 <header>
                     <field name="state" widget="statusbar"/>
-                    <button name="action_request" string="Solicitar" type="object" class="btn-primary"  invisible="state != 'draft'"/>
+                    <button name="action_request" string="Solicitar" type="object" class="btn-primary"  invisible="state == 'requested'"/>
                     <button name="action_approve" string="Aprobar" type="object" class="btn-success" invisible="state != 'requested'"/>
                     <button name="action_reject" string="Rechazar" type="object" class="btn-danger" invisible="state != 'requested'"/>
                     <button name="action_download_certificate" string="Descargar Certificado" type="object" class="btn-info"  invisible="not has_attachment"/>

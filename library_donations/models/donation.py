@@ -63,7 +63,7 @@ class LibraryDonation(models.Model):
             career = self.env['university.career'].browse(vals['career_id'])
             donation_type = vals.get('donation_type', 'individual')
             seq = self.env['ir.sequence'].next_by_code('library.donation') or '0000'
-            vals['name'] = f"{donation_type[:3].upper()}-{campus.description[:4].upper()}-{career.name[:3].upper()}-{seq}"
+            vals['name'] = f"DON-{donation_type[:3].upper()}-{campus.description[:3].upper()}-{career.name[:3].upper()}-{seq}"
         return super(LibraryDonation, self).create(vals)
     
     @api.constrains('name')
@@ -100,14 +100,15 @@ class LibraryDonation(models.Model):
     def action_request(self):
         """Cambiar el estado a Solicitado."""
         self.ensure_one()
-        if self.state == 'draft':
+        if self.state == 'draft' or self.state == 'rejected':
             self.state = 'requested'
             self.message_post(body=_("La donación ha sido solicitada."), subtype_xmlid="mail.mt_comment")
 
              # Enviar correo de notificación
             template = self.env.ref('library_donations.email_template_donation_approval')
             if template:
-                template.send_mail(self.id, force_send=True)
+                for record in self:
+                    template.send_mail(record.id, force_send=True)
                 self.message_post(body=_("Correo de notificación enviado al aprobador de donaciones."),
                               message_type='notification',
                               subtype_xmlid="mail.mt_note")
