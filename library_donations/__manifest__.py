@@ -18,7 +18,7 @@ El presente módulo se encarga de gestionar las donaciones hechas a las bibliote
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','notif_utils','university_groups_users','university_students', 'mail'],
+    'depends': ['base','notif_utils','university_groups_users', 'mail'],
 
     # always loaded
     'data': [
