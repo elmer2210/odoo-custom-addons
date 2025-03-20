@@ -1,0 +1,28 @@
+<odoo>
+    <!--Cron Jobs para cambiar el estado a venciado-->
+    <data noupdate="1">
+        <record id="cron_check_overdue_loans" model="ir.cron">
+            <field name="name">Actualizar Préstamos Vencidos</field>
+            <field name="model_id" ref="model_library_loan"/>
+            <field name="state">code</field>
+            <field name="code">model._check_overdue_loans()</field>
+            <field name="interval_type">minutes</field>
+            <field name="interval_number">30</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+    <!--Cron Job para cambiar el estado de reservado a activo-->
+    <data noupdate="1">
+        <record id="cron_auto_convert_reservations" model="ir.cron">
+            <field name="name">Convertir Reservas a Préstamos</field>
+            <field name="model_id" ref="model_library_loan"/>
+            <field name="state">code</field>
+            <field name="code">model._auto_convert_reservations_to_loans()</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="active" eval="True"/>
+        </record>
+    </data>
+</odoo>

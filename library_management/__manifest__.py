@@ -25,13 +25,13 @@
         'security/ir.model.access.csv',
         #'security/library_rules.xml',
         'views/library_cubicle_views.xml',
-        'views/library_kanban_view.xml',
         'views/library_loan_views.xml',
         'views/library_reservation_view.xml',
         'views/library_computer_views.xml',
         'views/library_entry_views.xml',
         'views/actions.xml',
         'views/menus.xml',
+        'data/ir_cron.xml'
     ],
     # only loaded in demonstration mode
 

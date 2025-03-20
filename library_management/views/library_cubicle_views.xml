@@ -13,11 +13,36 @@
         </field>
     </record>
 
+    <record id="view_library_cubicle_kanban" model="ir.ui.view">
+        <field name="name">library.cubicle.kanban</field>
+        <field name="model">library.cubicle</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="status">
+                <field name="name"/>
+                <field name="campus_id"/>
+                <field name="status"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click">
+                            <strong><field name="name"/></strong>
+                            <div>Campus: <field name="campus_id"/></div>
+                            <div>Estado: <field name="status"/></div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
     <record id="view_library_cubicle_form" model="ir.ui.view">
         <field name="name">library.cubicle.form</field>
         <field name="model">library.cubicle</field>
         <field name="arch" type="xml">
             <form>
+             <header>
+                    <!-- Campo de estado como statusbar -->
+                    <field name="status" widget="statusbar" statusbar_visible="available,reserved,occupied,maintenance" options="{'clickable': 1}"/>
+                </header>
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -30,4 +55,20 @@
             </form>
         </field>
     </record>
+    <!--Vista Seach con fitro-->
+    <record id="view_library_loan_search" model="ir.ui.view">
+    <field name="name">library.loan.search</field>
+    <field name="model">library.loan</field>
+    <field name="arch" type="xml">
+        <search string="Buscar Préstamos de Cubículos">
+            <filter name="filter_active_today" string="Activos Hoy" 
+                    domain="[('state', '=', 'active')]"
+                    help="Muestra solo préstamos activos de hoy" />
+            <field name="state"/>
+            <field name="start_time"/>
+            <field name="end_time"/>
+        </search>
+    </field>
+</record>
+
 </odoo>

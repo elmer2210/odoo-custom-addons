@@ -26,14 +26,14 @@
     <record id="action_library_cubicle" model="ir.actions.act_window">
         <field name="name">Gestión de Cubículos</field>
         <field name="res_model">library.cubicle</field>
-        <field name="view_mode">tree,form,kanban</field>
+        <field name="view_mode">kanban,tree,form</field>
     </record>
 
     <!-- Acción para Préstamos -->
     <record id="action_library_loan" model="ir.actions.act_window">
         <field name="name">Préstamos de Cubículos</field>
         <field name="res_model">library.loan</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
          <field name="context">{'default_state': 'active'}</field>
     </record>
 
