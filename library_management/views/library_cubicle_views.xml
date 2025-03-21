@@ -17,22 +17,55 @@
         <field name="name">library.cubicle.kanban</field>
         <field name="model">library.cubicle</field>
         <field name="arch" type="xml">
-            <kanban default_group_by="status">
+            <kanban default_group_by="status" 
+                class="o_kanban_view o_kanban_grouped"
+                create="False"
+                group_create="False">
                 <field name="name"/>
-                <field name="campus_id"/>
                 <field name="status"/>
+                <field name="campus_id"/>
+                <field name="disability_preference"/>
+                <field name="cubicle_type"/>
                 <templates>
                     <t t-name="kanban-box">
-                        <div class="oe_kanban_global_click">
-                            <strong><field name="name"/></strong>
-                            <div>Campus: <field name="campus_id"/></div>
-                            <div>Estado: <field name="status"/></div>
+                        <div class="oe_kanban_global_click card shadow-sm p-3 mb-3" style="border-radius: 10px; min-width: 250px;">
+                            <!-- Cabecera con el nombre del cubículo y el estado -->
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong class="text-primary" style="font-size: 1.2rem;">
+                                    <t t-if="record.name" t-esc="record.name.value"/>
+                                </strong>
+                                <span class="badge badge-pill"
+                                    t-if="record.status"
+                                    t-att-class="'badge ' + (record.status.raw_value == 'available' and 'success' or 
+                                                            record.status.raw_value == 'occupied' and 'warning' or 
+                                                            record.status.raw_value == 'reserved' and 'info' or 
+                                                            record.status.raw_value == 'maintenance' and 'danger' or 
+                                                            'secondary')">
+                                    <t t-esc="record.status.value"/>
+                                </span>
+                            </div>
+
+                            <!-- Información adicional -->
+                            <div class="text-muted small">
+                                <i class="fa fa-university"> </i> <strong>Campus: </strong> 
+                                <t t-if="record.campus_id and record.campus_id.value" t-esc="record.campus_id.value"/>
+                            </div>
+
+                            <div class="text-muted small">
+                                <i class="fa fa-wheelchair"> </i> <strong>Accesible: </strong> 
+                                <t t-if="record.disability_preference" t-esc="record.disability_preference.value and 'Sí' or 'No'"/>
+                            </div>
+
+                            <div class="mt-2">
+                                <i class="fa fa-bars"> </i> <t t-if="record.cubicle_type and record.cubicle_type.value" t-esc="record.cubicle_type.value"/>
+                            </div>
                         </div>
                     </t>
                 </templates>
             </kanban>
         </field>
     </record>
+
 
     <record id="view_library_cubicle_form" model="ir.ui.view">
         <field name="name">library.cubicle.form</field>
@@ -56,19 +89,27 @@
         </field>
     </record>
     <!--Vista Seach con fitro-->
-    <record id="view_library_loan_search" model="ir.ui.view">
-    <field name="name">library.loan.search</field>
-    <field name="model">library.loan</field>
-    <field name="arch" type="xml">
-        <search string="Buscar Préstamos de Cubículos">
-            <filter name="filter_active_today" string="Activos Hoy" 
-                    domain="[('state', '=', 'active')]"
-                    help="Muestra solo préstamos activos de hoy" />
-            <field name="state"/>
-            <field name="start_time"/>
-            <field name="end_time"/>
-        </search>
-    </field>
-</record>
+    <record id="view_library_cubicle_search" model="ir.ui.view">
+        <field name="name">library.cubicle.search</field>
+        <field name="model">library.cubicle</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Cubículos">
+                <filter name="filter_campus_user" string="Por Campus" 
+                        domain="[('campus_id', '=', uid)]"
+                        help="Muestra solo los cubículos del campus del bibliotecario" />
+                <filter name="filter_disability_preference" string="Preferencial" 
+                        domain="[('disability_preference', '=', True)]"
+                        help="Muestra solo los cubículos preferenciales" />
+                 <filter name="filter_cubicle_status" string="Cubículos Disponoble" 
+                        domain="[('status', '=', 'available')]"
+                        help="Muestra solo los cubículos Disponibles" />
+                <field name="name"/>
+                <field name="status"/>
+                <group string="Agrupar Por">
+                    <filter name="group_by_campus" string="Campus" context="{'group_by': 'campus_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
 </odoo>

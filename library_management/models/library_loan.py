@@ -21,6 +21,7 @@ class LibraryLoan(models.Model):
                                 )
     user_id = fields.Many2one('res.users', string='Bibliotecario', default=lambda self: self.env.user, readonly=True)
     student_name = fields.Char(related='student_id.completename', string='Nombres del Estudiante', readonly=True)
+    date= fields.Date(string="Fecha de Préstamo", store=True, compute="_compute_start_date")
     start_time = fields.Datetime(string='Fecha y Hora de Inicio', default=fields.Datetime.now, required=True)
     end_time = fields.Datetime(string='Fecha y Hora de Fin', compute='_compute_end_time', store=True)
     state = fields.Selection([
@@ -34,6 +35,10 @@ class LibraryLoan(models.Model):
 
     # Campo Calculado para el Nombre del Evento
     display_name = fields.Char(string='Nombre de la Reserva', compute='_compute_display_name', store=True)
+
+    def _compute_start_date(self):
+        for record in self:
+            record.date = record.start_time.date() if record.start_time else False
 
     @api.onchange('barcode')
     def _onchange_barcode(self):
@@ -141,9 +146,9 @@ class LibraryLoan(models.Model):
         else:
             self.send_notification(
                 title="Problemas con la devolución",
-                message=f"El presente registro no se puede devolver, verifique el estado del mismo.",
+                message=f"El registro {self.display_name} ha sido modificado",
                 sticky=False,
-                msg_type='success',
+                msg_type='warning',
             )
 
         return super(LibraryLoan, self).write(vals)

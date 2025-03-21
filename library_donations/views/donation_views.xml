@@ -68,11 +68,11 @@
                                 </tree>
                             </field>
                         </page>
-                        <!-- Pestaña para Donación Grupal-->
+                        <!-- Pestaña para Donación Grupal -->
                         <page string="Donadores">
                            <field name="donor_ids">
                                 <tree editable="bottom">
-                                    <field name="student_id" string="Cédula"/>
+                                    <field name="student_id" widget="many2one" options="{'no_create': True}" string="Cédula"/>
                                     <field name="barcode" string="Código de Barras"/>
                                     <field name="completename" string="Nombre Completo"/>
                                     <field name="campus_id" string="Sede"/>

@@ -4,7 +4,7 @@
             <field name="name">Notificación de Donación para Aprobación</field>
             <field name="model_id" ref="model_library_donation"/>
             <field name="subject">Nueva Donación {{object.name}}</field>
-            <field name="email_from">'info@umet.edu.ec'</field>
+            <field name="email_from">${{object.create_uid.email and '%s &lt;%s&gt;' % (object.create_uid.name, object.create_uid.email) or ''}|safe}</field>
             <field name="email_to">{{object.get_donation_approver_email()}}</field>
             <field name="body_html" type="html">
                 <div style="margin: 0px; padding: 0px; font-size: 13px;">
@@ -15,8 +15,94 @@
                             <li><strong>Código:</strong><t t-out="object.name or ''">IND-CORU-ENF-DON-00002</t></li>
                             <li><strong>Tipo:</strong> <t t-out="object.donation_type or ''">Inidividual </t></li>
                             <li><strong>Fecha:</strong> <t t-out="object.date or ''">10/01/2025</t></li>
-                            <li><strong>Carrera:</strong> <t t-if="object.career_id.name"> <t t-out="object.career_id.name or ''">Enfermería</t></t></li>
+                            <li><strong>Carrera:</strong> <t t-if="object.career_id.name"> <t t-out="object.career_id.name ">Enfermería</t></t></li>
                             <li><strong>Total:</strong> $ <t t-out="object.total_cost or ''">50</t></li>
+                        </ul>
+                        Por favor, revisa y aprueba la donación en el sistema. <br/><br/>
+                        Buen Día.
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+    <data noupdate="0">
+        <record id="email_template_donation_approvated" model="mail.template">
+            <field name="name">Notificación de Donación Aprovadas</field>
+            <field name="model_id" ref="model_library_donation"/>
+            <field name="subject">Certificado de Donación {{object.name}}</field>
+            <field name="email_from">{{object.get_donation_approver_email()}}</field>
+            <field name="email_to">${{object.create_uid.email}}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Guayaquil, <t t-out="datetime.date.today().strftime('%d de %B de %Y')">14 de febreo, de 2025</t><br/><br/>
+                        Certifico que el/los egresado/os de la carrera  <strong>
+                        <t t-if="object.career_id.description"> <t t-out="object.career_id.description">ENFERMERÍA - QUITO</t></t>
+                        </strong>  que se detallan a continuación:<br/> 
+                        <t t-if="object.donor_ids">
+                            <t t-foreach="object.donor_ids" t-as="donor">
+                                <p style="font-weight: bold;"><t t-esc="donor.completename">Juan Peralta </t></p>
+                            </t>
+                        </t>
+                        Realizaron la donación de los items que se datallan a continuación: <br/><br/> 
+                        <table  border="1" cellspacing="0" cellpadding="5" width="100%" style="border-collapse: collapse;">
+                            <thead style="background-color: #f2f2f2;">
+                                <tr>
+                                    <th style="text-align: center;">Título</th>
+                                    <th style="text-align: center;">Autor</th>
+                                    <th style="text-align: center;">Año Pu.</th>
+                                    <th style="text-align: center;">Costo U.</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-if="object.donation_items">
+                                    <t t-foreach="object.donation_items" t-as="line">
+                                        <tr>
+                                            <td style="text-align: center;"><t t-out="line.title or ''">La metodología Montessori en la Eduación Infantil </t></td>
+                                            <td style="text-align: center;"><t t-out="line.author or ''">Juan Peralta</t></td>
+                                            <td style="text-align: center;"><t t-out="line.publication_year or ''">2023 </t></td>
+                                            <td style="text-align: center;">$ <t t-out="line.cost or 00.00">25.00 </t></td>
+                                        </tr>
+                                    </t>
+                                </t>
+                                <tr>
+                                    <td colspan="3" style="text-align: right;"><strong>Total</strong></td>
+                                    <td style="text-align: center;">$ <t t-out="object.total_cost or 00.00">00.00</t></td>
+                                </tr>
+                            </tbody>
+                        </table> <br/>
+                        
+                        Como prueba de lo dicho se adjunta la <strong>Factura N. <t t-out="object.invoice_number or 'N/A'">001-003-000051264</t></strong><br/>
+                        El presente corro o certificado se emite como constancia de su honorable donación<br/><br/>
+                        <h6>Atentamente,</h6>
+                        <h6>Universidad Metropolitana</h6>
+                        <h6>Centro de Recursos para el Aprendizaje e Investigación</h6>
+                    </p>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="email_template_donation_rejected" model="mail.template">
+            <field name="name">Notificación de Donación Rechazadas</field>
+            <field name="model_id" ref="model_library_donation"/>
+            <field name="subject">Donación {{object.name}} Rechazada</field>
+            <field name="email_from">${{object.create_uid.email and '%s &lt;%s&gt;' % (object.create_uid.name, object.create_uid.email) or ''}|safe}</field>
+            <field name="email_to">{{object.get_donation_approver_email()}}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-size: 13px;">
+                    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                        Estimada MSc. Jacqueline Baque<br/><br/>
+                        Se ha registrado una nueva donación que requiere tu aprobación:
+                        <ul>
+                            <li><strong>Código:</strong><t t-out="object.name or ''">IND-CORU-ENF-DON-00002</t></li>
+                            <li><strong>Tipo:</strong> <t t-out="object.donation_type or ''">Inidividual </t></li>
+                            <li><strong>Fecha:</strong> <t t-out="object.date or ''">10/01/2025</t></li>
+                            <li><strong>Carrera:</strong> <t t-if="object.career_id.name"> <t t-out="object.career_id.name">Enfermería</t></t></li>
+                            <li><strong>Total:</strong> $ <t t-out="object.total_cost">50</t></li>
                         </ul>
                         Por favor, revisa y aprueba la donación en el sistema. <br/><br/>
                         Buen Día.

@@ -28,13 +28,10 @@ class LibraryDonation(models.Model):
     )
 
     # Relación con estudiantes
-    donor_ids = fields.Many2many(
-        "student.profile",  # Modelo relacionado
-        "library_donation_student_rel",  # Nombre de la tabla intermedia
-        "donation_id",  # Nombre del campo en esta tabla
-        "student_id",  # Nombre del campo en la otra tabla
+    donor_ids = fields.One2many(
+        'student.profile',
+        'donation_id',
         string="Donadores",
-        domain="[('campus_id', '=', campus_id), ('career_id', '=', career_id)]"
     )
 
     # Ítems Donados

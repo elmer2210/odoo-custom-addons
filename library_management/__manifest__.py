@@ -18,7 +18,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'university_management','university_students','university_groups_users','notif_utils', 'mail', 'library_donations'],
+    'depends': ['base', 'university_management','university_students','university_groups_users','notif_utils', 'library_donations', 'mail',],
 
     # always loaded
     'data': [

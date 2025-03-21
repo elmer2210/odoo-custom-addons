@@ -33,7 +33,7 @@
     <record id="action_library_loan" model="ir.actions.act_window">
         <field name="name">Préstamos de Cubículos</field>
         <field name="res_model">library.loan</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,tree,form,graph</field>
          <field name="context">{'default_state': 'active'}</field>
     </record>
 
