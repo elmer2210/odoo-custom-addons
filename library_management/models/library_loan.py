@@ -13,11 +13,16 @@ class LibraryLoan(models.Model):
     barcode = fields.Char(string='Código de Barras', help="Escanea el código de barras del estudiante")
     student_id = fields.Many2one('student.profile', string='Estudiante')
     cubicle_id = fields.Many2one('library.cubicle', 
-                                 string='Cubículo', 
-                                 required=True,
-                                domain=lambda self: [
+                                    string='Cubículo', 
+                                    required=True,
+                                    domain=lambda self: [
                                     ('campus_id', '=', self.env.user.campus_id.id)
                                 ]
+                                )
+    campus_id = fields.Many2one('university.campus', 
+                                    string='Sede',
+                                    related='cubicle_id.campus_id',
+                                    store=True
                                 )
     user_id = fields.Many2one('res.users', string='Bibliotecario', default=lambda self: self.env.user, readonly=True)
     student_name = fields.Char(related='student_id.completename', string='Nombres del Estudiante', readonly=True)

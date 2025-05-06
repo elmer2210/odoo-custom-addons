@@ -5,7 +5,7 @@ class LibraryCubicle(models.Model):
     _description = 'Library Cubicle'
 
     name = fields.Char(string='Número del Cubículo', required=True)
-    campus_id = fields.Many2one('university.campus', string='Campus', required=True)  # Ahora usamos campus_id en lugar de branch_id
+    campus_id = fields.Many2one('university.campus', string='Campus', required=True)  
     cubicle_type = fields.Selection([
         ('meeting', 'Reunión o Tareas (Mesas y Sillas)'),
         ('computer', 'Equipado con Computadora (Reuniones Online, Tareas con Audio/Video)')

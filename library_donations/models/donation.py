@@ -28,9 +28,9 @@ class LibraryDonation(models.Model):
     )
 
     # Relación con estudiantes
-    donor_ids = fields.One2many(
+    donor_ids = fields.Many2many(
         'student.profile',
-        'donation_id',
+        'id_donation',
         string="Donadores",
     )
 
@@ -63,7 +63,7 @@ class LibraryDonation(models.Model):
             career = self.env['university.career'].browse(vals['career_id'])
             donation_type = vals.get('donation_type', 'individual')
             seq = self.env['ir.sequence'].next_by_code('library.donation') or '0000'
-            vals['name'] = f"DON-{donation_type[:3].upper()}-{campus.description[:3].upper()}-{career.name[:3].upper()}-{seq}"
+            vals['name'] = f"{donation_type[:3].upper()}-{campus.description[:3].upper()}-{career.name[:3].upper()}-{seq}"
         return super(LibraryDonation, self).create(vals)
     
     @api.constrains('name')

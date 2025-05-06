@@ -19,7 +19,7 @@ class StudentProfile(models.Model):
     has_disability = fields.Boolean(string='¿Tiene Discapacidad?', required=True)
     disability_type_id = fields.Many2one('student.disability', string='Tipo de Discapacidad')
     active = fields.Boolean(string='Activo', default=True)
-    donation_id = fields.Many2one('library.donation', string="Donación",)
+    #id_donation = fields.Many2one('library.donation', string="Donación",)
 
     @api.constrains('barcode', 'student_id')
     def _check_unique_fields(self):

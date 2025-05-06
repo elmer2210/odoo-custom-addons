@@ -9,6 +9,11 @@ _logger = logging.getLogger(__name__)
 
 class SessionAPI(http.Controller):
 
+    
+    @http.route('/test/ruta', type='http', auth='public', methods=['GET'])
+    def test_route(self):
+        return "Ruta de prueba funcionando"
+
     @http.route('/api/session/start', type='json', auth='public', methods=['POST'], csrf=False)
     def start_session(self, **data):
         """ Recibe `numberID` y `email`, valida y guarda el inicio de sesión """

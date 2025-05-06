@@ -8,6 +8,7 @@
             <tree>
                 <field name="cubicle_id"/>
                 <field name="student_id"/>
+                <field name="campus_id"/>
                 <field name="start_time"/>
                 <field name="end_time"/>
                 <field name="state"/>
@@ -99,12 +100,15 @@
         <field name="model">library.loan</field>
         <field name="arch" type="xml">
             <search string="Buscar Préstamos de Cubículos">
-                <filter name="filter_active_today" string="Activos Hoy" 
+                <filter name="filter_active_today" string="Préstamos Activos" 
                         domain="[('state', '=', 'active')]"
                         help="Muestra solo préstamos activos de hoy" />
                 <field name="state"/>
                 <field name="start_time"/>
                 <field name="end_time"/>
+                <group expand="0" string="Group By">
+                    <filter string="Sedes" name="campus_id" context="{'group_by': 'campus_id'}"/>
+                </group>
             </search>
         </field>
     </record>
