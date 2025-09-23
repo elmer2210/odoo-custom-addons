@@ -1,0 +1,6 @@
+<odoo>
+  <record id="module_category_crai" model="ir.module.category">
+    <field name="name">CRAI</field>
+    <field name="sequence">10</field>
+  </record>
+</odoo>

@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+acc_crai_student_admin,crai.student admin,model_crai_student,crai_base.group_crai_admin,1,1,1,1
+acc_crai_student_librarian,crai.student librarian,model_crai_student,crai_base.group_crai_librarian,1,0,0,0

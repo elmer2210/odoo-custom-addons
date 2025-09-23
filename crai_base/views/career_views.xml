@@ -1,0 +1,40 @@
+<odoo>
+  <record id="view_crai_career_tree" model="ir.ui.view">
+    <field name="name">crai.career.tree</field>
+    <field name="model">crai.career</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="code"/>
+        <field name="faculty_id"/>
+        <field name="active"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_crai_career_form" model="ir.ui.view">
+    <field name="name">crai.career.form</field>
+    <field name="model">crai.career</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="code"/>
+            <field name="faculty_id"/>
+            <field name="active"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_crai_career" model="ir.actions.act_window">
+    <field name="name">Carreras</field>
+    <field name="res_model">crai.career</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <menuitem id="menu_crai_career" name="Carreras" parent="menu_crai_config"
+            action="action_crai_career" sequence="30"/>
+</odoo>

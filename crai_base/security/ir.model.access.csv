@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crai_campus_user,crai.campus user,model_crai_campus,base.group_user,1,1,1,0
+access_crai_faculty_user,crai.faculty user,model_crai_faculty,base.group_user,1,1,1,0
+access_crai_career_user,crai.career user,model_crai_career,base.group_user,1,1,1,0

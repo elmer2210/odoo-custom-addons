@@ -1,0 +1,16 @@
+<odoo>
+  <record id="group_crai_admin" model="res.groups">
+    <field name="name">CRAI Admin</field>
+    <field name="category_id" ref="crai_base.module_category_crai"/>
+  </record>
+
+  <record id="group_crai_librarian" model="res.groups">
+    <field name="name">CRAI Librarian</field>
+    <field name="category_id" ref="crai_base.module_category_crai"/>
+  </record>
+
+  <record id="group_crai_donation_approver" model="res.groups">
+    <field name="name">CRAI Donation Approver</field>
+    <field name="category_id" ref="crai_base.module_category_crai"/>
+  </record>
+</odoo>

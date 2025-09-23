@@ -1,0 +1,97 @@
+<odoo>
+
+  <!-- TREE -->
+    <record id="view_crai_student_tree" model="ir.ui.view">
+        <field name="name">crai.student.tree</field>
+        <field name="model">crai.student</field>
+        <field name="arch" type="xml">
+        <tree>
+            <field name="display_name"/>
+             <field name="number_id"/>
+            <field name="email"/>
+            <field name="campus_id"/>
+            <field name="faculty_id"/>
+            <field name="career_id"/>
+            <field name="has_disability"/>
+            <field name="active"/>
+        </tree>
+        </field>
+    </record>
+
+    <!-- FORM (sin attrs/states; usar modifiers) -->
+    <record id="view_crai_student_form" model="ir.ui.view">
+        <field name="name">crai.student.form</field>
+        <field name="model">crai.student</field>
+        <field name="arch" type="xml">
+        <form>
+            <sheet>
+            <group>
+                <field name="name" required="1"/>
+                <field name="number_id" required="1"/>
+                <field name="barcode" readonly="1"/>  
+                <field name="email"/>
+            </group>
+            <group string="Vinculación CRAI">
+                <field name="campus_id" required="1"/>
+                <field name="faculty_id"/>
+                <field name="career_id"/>
+            </group>
+            <group string="Accesibilidad">
+                <field name="has_disability"/>
+                <field name="disability_type" modifiers="{'invisible': [['has_disability','=',False]]}"/>
+            </group>
+            <group string="Sincronización">
+                <field name="external_source" readonly="1"/>
+                <field name="external_ref" readonly="1"/>
+                <field name="active"/>
+            </group>
+            </sheet>
+        </form>
+        </field>
+    </record>
+
+    <!-- SEARCH (simple y válida en 17.0) -->
+    <record id="view_crai_student_search" model="ir.ui.view">
+    <field name="name">crai.student.search</field>
+        <field name="model">crai.student</field>
+        <field name="arch" type="xml">
+            <search string="Buscar estudiantes">
+                <!-- Filtros -->
+                <filter name="filter_active" string="Activos"
+                        domain="[('active','=',True)]"
+                        help="Mostrar solo estudiantes activos"/>
+                <filter name="filter_inactive" string="Inactivos"
+                        domain="[('active','=',False)]"/>
+                <filter name="filter_with_disability" string="Con discapacidad"
+                        domain="[('has_disability','=',True)]"/>
+                <filter name="filter_no_career" string="Sin carrera"
+                        domain="[('career_id','=',False)]"/>
+
+                <!-- Campos de búsqueda directa -->
+                <field name="display_name"/>
+                <field name="number_id"/>
+                <field name="email"/>
+                <field name="campus_id"/>
+                <field name="faculty_id"/>
+                <field name="career_id"/>
+
+                <!-- Agrupar -->
+                <group string="Agrupar por">
+                    <filter name="group_by_campus" string="Sede" context="{'group_by':'campus_id'}"/>
+                    <filter name="group_by_faculty" string="Facultad" context="{'group_by':'faculty_id'}"/>
+                    <filter name="group_by_career" string="Carrera" context="{'group_by':'career_id'}"/>
+                    <filter name="group_by_disability" string="Discapacidad" context="{'group_by':'has_disability'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+
+    <!-- ACTION -->
+    <record id="action_crai_student" model="ir.actions.act_window">
+        <field name="name">Estudiantes</field>
+        <field name="res_model">crai.student</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="context">{'search_default_filter_active': 1}</field>
+    </record>
+</odoo>

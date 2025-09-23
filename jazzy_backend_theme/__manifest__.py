@@ -31,7 +31,6 @@
     "website": "https://www.cybrosys.com",
     "depends": ["web", "mail"],
     "data": [
-        'views/layout_templates.xml',
         'views/res_config_settings_views.xml',
     ],
     'assets': {

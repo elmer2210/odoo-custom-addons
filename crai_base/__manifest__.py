@@ -1,0 +1,22 @@
+{
+    "name": "CRAI Base",
+    "summary": "Entidades base del sistema CRAI (Sedes, Facultades, Carreras) y configuración de usuarios",
+    "version": "17.0.1.0.0",
+    "category": "Library",
+    "author": "CRAI UMET",
+    "website": "",
+    "license": "LGPL-3",
+    "application": False,
+    "installable": True,
+    "depends": ["base"],
+    "data": [
+        "security/module_category.xml",  
+        "security/groups.xml",
+        "security/ir.model.access.csv",
+        "views/menu.xml",
+        "views/campus_views.xml",
+        "views/faculty_views.xml",
+        "views/career_views.xml",
+        "views/res_users_views.xml",
+    ],
+}

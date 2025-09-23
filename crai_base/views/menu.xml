@@ -1,0 +1,8 @@
+<odoo>
+  <!-- Menú raíz CRAI -->
+  <menuitem id="menu_crai_root" name="CRAI Monitoreo" web_icon="crai_base,static/description/icon.png" sequence="10"/>
+
+  <!-- Menú Configuración (solo Admin CRAI) -->
+  <menuitem id="menu_crai_config" name="Configuración" parent="menu_crai_root"
+            groups="crai_base.group_crai_admin" sequence="90"/>
+</odoo>
