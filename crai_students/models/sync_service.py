@@ -6,7 +6,8 @@ import re
 
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-
+import logging
+_logger = logging.getLogger(__name__)
 
 # ---------------------------
 # Normalización determinista
@@ -77,13 +78,30 @@ class CraiStudentsIngestService(models.AbstractModel):
     # -------------------------
     # Catálogos (Campus/Fac/Car)
     # -------------------------
-    def _ensure_campus(self, sed_descripcion):
+    def _ensure_site(self, sed_descripcion):
+        Site = self.env["crai.site"].sudo()
+        name = (sed_descripcion or "").strip() or "SIN SEDE"
+        code = normalize_code(name) or "SEDE"
+        site = Site.search([("name", "=", name)], limit=1)
+        if not site:
+            site = Site.create({"name": name, "code": code})
+        return site
+
+    def _ensure_campus(self, cam_descripcion, site):
         Campus = self.env["crai.campus"].sudo()
-        name = normalize_name(sed_descripcion) or "SIN SEDE"
+        if not cam_descripcion:
+            return None
+        name = (cam_descripcion or "").strip()
         code = normalize_code(name) or "CAMPUS"
-        campus = Campus.search([("name", "=", name)], limit=1)
+        domain = [("code", "=", code)]
+        if site:
+            domain.append(("site_id", "=", site.id))
+        campus = Campus.search(domain, limit=1)
         if not campus:
-            campus = Campus.create({"name": name, "code": code})
+            campus = Campus.create({"name": name, "code": code, "site_id": site.id})
+        else:
+            if campus.name != name:
+                campus.write({"name": name})
         return campus
 
     def _ensure_faculty(self, fac_descripcion):
@@ -125,7 +143,7 @@ class CraiStudentsIngestService(models.AbstractModel):
     # INGESTA PRINCIPAL
     # =========================
     @api.model
-    def run_ingest(self, dry_run=False):
+    def run_ingest(self, dry_run=False, update_existing=False):
         IrConfig = self.env["ir.config_parameter"].sudo()
         url = (IrConfig.get_param("crai_students.api_url") or "").strip()
         token = (IrConfig.get_param("crai_students.api_token") or "").strip()
@@ -148,94 +166,107 @@ class CraiStudentsIngestService(models.AbstractModel):
 
         total = len(items)
         create = 0
+        update = 0
         skip = 0
         errors = 0
 
-        # Prefetch existente por cédula (FIX: no construyas set de dicts)
-        existing = Student.search_read(
-            domain=[("number_id", "!=", False)],
-            fields=["number_id"]
-        )
-        existing_docs = {r["number_id"] for r in existing if r.get("number_id")}
+        # Prefetch -> dict cedula -> id  (NO set)
+        existing = Student.search_read([("number_id", "!=", False)], ["id", "number_id"])
+        existing_map = {r["number_id"]: r["id"] for r in existing if r.get("number_id")}
 
-        # Mapa forzado de "carrera -> facultad actual"
         career_to_current_faculty = self._get_current_faculty_map()
 
         for row in items:
-            # Aislar errores por fila (no tires toda la corrida)
             with self.env.cr.savepoint():
                 try:
-                    cedula = (row.get("cedula") or "").strip()
-                    nombre = (row.get("nombres_apellidos") or "").strip()
-                    correo = (row.get("correo_institucional") or "").strip()
-                    sede = (row.get("sed_descripcion") or "").strip()
-
-                    fac_desc = (row.get("fac_descripcion") or "").strip()
-                    car_desc = (row.get("car_descripcion") or "").strip()
-
-                    discap = row.get("discapacidad")
-                    tipo = row.get("tipo_discapacidad")
+                    cedula      = (row.get("cedula") or "").strip()
+                    nombre      = (row.get("nombres_apellidos") or "").strip()
+                    correo      = (row.get("correo_institucional") or "").strip()
+                    sede        = (row.get("sed_descripcion") or "").strip()    # Sede (texto)
+                    campus_desc = (row.get("cam_descripcion") or "").strip()    # Campus (texto)
+                    fac_desc    = (row.get("fac_descripcion") or "").strip()
+                    car_desc    = (row.get("car_descripcion") or "").strip()
+                    discap      = row.get("discapacidad")
+                    tipo        = row.get("tipo_discapacidad")
 
                     if not cedula:
                         skip += 1
                         continue
 
-                    # si ya existe esa cédula -> omitimos (no tocamos nada)
-                    if cedula in existing_docs:
-                        skip += 1
-                        continue
+                    # Catálogos (seguros ante falta de crai.site o site_id)
+                    site = self._ensure_site(sede)                               # None si no existe el modelo
+                    campus_rec = self._ensure_campus(campus_desc, site)
 
-                    # asegurar campus
-                    campus = self._ensure_campus(sede)
-
-                    # determinar facultad efectiva:
-                    # 1) Si hay mapeo de facultad actual por carrera, úsalo (simplifica tu caso Derecho)
-                    # 2) Si no, usa la que viene en la API
-                    faculty_effective = None
                     car_code_norm = normalize_code(car_desc)
                     mapped_fac_name = career_to_current_faculty.get(car_code_norm)
                     if mapped_fac_name:
-                        # Forzamos la facultad “actual”
                         faculty_effective = self._ensure_faculty(mapped_fac_name)
                     else:
-                        # Respetamos lo que viene
                         faculty_effective = self._ensure_faculty(fac_desc)
-
-                    # asegurar carrera con (faculty_effective, code)
-                    career = self._ensure_career(car_desc, faculty_effective)
+                    career_rec = self._ensure_career(car_desc, faculty_effective)
 
                     has_dis, dis_type = self._norm_discapacidad(discap, tipo)
 
-                    vals = {
+                    # EXISTE -> actualizar (si se pidió)
+                    if cedula in existing_map:
+                        if update_existing:
+                            stu = Student.browse(existing_map[cedula])
+                            vals_update = {}
+
+                            new_name = nombre or correo or cedula
+                            if stu.name != new_name:
+                                vals_update["name"] = new_name
+                            if (stu.email or False) != (correo or False):
+                                vals_update["email"] = correo or False
+                            if "site_id" in Student._fields and (stu.site_id.id or False) != (site.id if site else False):
+                                vals_update["site_id"] = site and site.id
+                            if (stu.campus_id.id or False) != (campus_rec.id if campus_rec else False):
+                                vals_update["campus_id"] = campus_rec and campus_rec.id
+                            if (stu.faculty_id.id or False) != (faculty_effective.id if faculty_effective else False):
+                                vals_update["faculty_id"] = faculty_effective and faculty_effective.id
+                            if (stu.career_id.id or False) != (career_rec.id if career_rec else False):
+                                vals_update["career_id"] = career_rec and career_rec.id
+                            if bool(getattr(stu, "has_disability", False)) != bool(has_dis):
+                                vals_update["has_disability"] = bool(has_dis)
+                            if (getattr(stu, "disability_type", False) or False) != (dis_type or False):
+                                vals_update["disability_type"] = dis_type or False
+
+                            if vals_update and not dry_run:
+                                stu.write(vals_update)
+                                update += 1
+                            else:
+                                skip += 1
+                        else:
+                            skip += 1
+                        continue  # importante
+
+                    # NUEVO -> crear
+                    vals_create = {
                         "name": nombre or correo or cedula,
-                        "number_id": cedula,     # canónico
-                        # barcode se computa = number_id en tu modelo
+                        "number_id": cedula,
                         "email": correo or False,
-                        "campus_id": campus.id,
+                        "campus_id": campus_rec and campus_rec.id,
                         "faculty_id": faculty_effective and faculty_effective.id,
-                        "career_id": career and career.id,
-                        "has_disability": has_dis,
-                        "disability_type": dis_type,
+                        "career_id": career_rec and career_rec.id,
+                        "has_disability": bool(has_dis),
+                        "disability_type": dis_type or False,
                         "external_source": "umet_api",
-                        "external_ref": cedula,  # llave externa estable en tu contexto
+                        "external_ref": cedula,
                         "active": True,
                     }
+                    # solo setear site_id si ese campo EXISTE en crai.student
+                    if "site_id" in Student._fields:
+                        vals_create["site_id"] = site and site.id
 
                     if not dry_run:
-                        Student.create(vals)
-                        existing_docs.add(cedula)  # evitar repetidos en la misma corrida
-
+                        Student.create(vals_create)
                     create += 1
 
-                except Exception:
-                    # registramos y seguimos
+                except Exception as e:
                     errors += 1
-                    # El savepoint revierte SOLO esta fila
-                    # (puedes agregar logs aquí si tienes _logger)
-                    # _logger.exception("Fila con error: %s", row)
+                    _logger.exception("Fila con error (cedula=%s): %s | row=%s", cedula, e, row)
                     continue
-
-        return {"total": total, "create": create, "skip": skip, "errors": errors}
+        return {"total": total, "create": create, "update": update, "skip": skip, "errors": errors}
 
     # cron entrypoint
     @api.model

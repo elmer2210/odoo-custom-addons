@@ -34,5 +34,5 @@
   </record>
 
   <menuitem id="menu_crai_faculty" name="Facultades" parent="menu_crai_config"
-            action="action_crai_faculty" sequence="20"/>
+            action="action_crai_faculty" sequence="30"/>
 </odoo>

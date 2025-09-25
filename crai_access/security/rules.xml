@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Librarian: visibilidad por sede -->
+    <record id="crai_reading_access_rule_librarian_by_campus" model="ir.rule">
+        <field name="name">Reading Access - Librarian campus visibility</field>
+        <field name="model_id" ref="model_crai_reading_access"/>
+        <field name="groups" eval="[(4, ref('crai_base.group_crai_librarian'))]"/>
+        <field name="domain_force">[('campus_id', 'in', user.crai_campus_ids.ids)]</field>
+    </record>
+</odoo>

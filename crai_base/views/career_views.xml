@@ -36,5 +36,5 @@
   </record>
 
   <menuitem id="menu_crai_career" name="Carreras" parent="menu_crai_config"
-            action="action_crai_career" sequence="30"/>
+            action="action_crai_career" sequence="40"/>
 </odoo>

@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crai_reading_access_admin,access_crai_reading_access_admin,model_crai_reading_access,crai_base.group_crai_admin,1,1,1,1
+access_crai_reading_access_librarian,access_crai_reading_access_librarian,model_crai_reading_access,crai_base.group_crai_librarian,1,1,1,1
+access_crai_reading_kiosk_wizard,access_crai_reading_kiosk_wizard,model_crai_reading_kiosk_wizard,,1,1,1,1

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- TREE -->
+    <record id="view_crai_reading_access_tree" model="ir.ui.view">
+        <field name="name">crai.reading.access.tree</field>
+        <field name="model">crai.reading.access</field>
+        <field name="arch" type="xml">
+            <tree string="Accesos" create="true" delete="true" editable="bottom">
+                <field name="occurred_at"/>
+                <field name="campus_id"/>
+                <field name="student_id"/>
+                <field name="student_career_id"/>
+                <field name="student_home_campus_id"/>
+                <field name="source"/>
+                <field name="operator_id"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- FORM -->
+    <record id="view_crai_reading_access_form" model="ir.ui.view">
+        <field name="name">crai.reading.access.form</field>
+        <field name="model">crai.reading.access</field>
+        <field name="arch" type="xml">
+            <form string="Acceso (Entrada)">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="student_id" modifiers='{"required": true}'/>
+                            <field name="student_career_id" readonly="1"/>
+                            <field name="campus_id" modifiers='{"required": true}'/>
+                        </group>
+                        <group>
+                            <field name="source" modifiers='{"required": true}'/>
+                            <field name="occurred_at" modifiers='{"required": true}'/>
+                            <field name="operator_id" readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- SEARCH -->
+    <record id="view_crai_reading_access_search" model="ir.ui.view">
+        <field name="name">crai.reading.access.search</field>
+        <field name="model">crai.reading.access</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Accesos de Estudiantes">
+                <!--Campos de Búsqueda direacta-->
+                <field name="student_id"/>
+                <field name="student_career_id" string="Carrera"/>
+                <field name="campus_id"/>
+                <!--Filtros-->
+                <filter name="my_campuses" string="Mis sedes" domain="[('campus_id.user_id','=', uid)]"/>
+                <filter name="today" string="Hoy"
+                        domain="[('occurred_at','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')),
+                                 ('occurred_at','&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="this_week" string="Esta semana"
+                        domain="[('occurred_at','&gt;=', (context_today() - relativedelta(days=(context_today().weekday()))).strftime('%Y-%m-%d 00:00:00')),
+                                 ('occurred_at','&lt;=', (context_today() + relativedelta(days=(6-context_today().weekday()))).strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="this_month" string="Este mes"
+                        domain="[('occurred_at','&gt;=', context_today().replace(day=1).strftime('%Y-%m-%d 00:00:00')),
+                                 ('occurred_at','&lt;=', (context_today().replace(day=1)+relativedelta(months=1,days=-1)).strftime('%Y-%m-%d 23:59:59'))]"/>
+                <!--Agrupar-->
+                <group expand="0" string="Agrupar por">
+                    <filter name="group_by_site" string="Sede" context="{'group_by':'campus_id'}"/>
+                    <filter name="group_by_career" string="Carrera" context="{'group_by':'student_career_id'}"/>
+                    <filter name="group_by_day" string="Día" context="{'group_by':'occurred_at:day'}"/>
+                    <filter name="group_by_month" string="Mes" context="{'group_by':'occurred_at:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- GRAPH / PIVOT (idéntico pero sin access_type) -->
+    <record id="view_crai_reading_access_graph" model="ir.ui.view">
+        <field name="name">crai.reading.access.graph</field>
+        <field name="model">crai.reading.access</field>
+        <field name="arch" type="xml">
+            <graph string="Entradas por sede/mes" type="bar" stacked="True">
+                <field name="campus_id" type="row"/>
+                <field name="occurred_at" interval="month"/>
+                <field name="id" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_crai_reading_access_pivot" model="ir.ui.view">
+        <field name="name">crai.reading.access.pivot</field>
+        <field name="model">crai.reading.access</field>
+        <field name="arch" type="xml">
+            <pivot string="Top carreras por asistencia">
+                <field name="student_career_id" type="row"/>
+                <field name="campus_id" type="col"/>
+                <field name="id" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- WIZARD: KIOSK -->
+    <record id="view_crai_reading_kiosk_wizard" model="ir.ui.view">
+        <field name="name">crai.reading.kiosk.wizard.form</field>
+        <field name="model">crai.reading.kiosk.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Kiosk - Escaneo">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="campus_id" modifiers='{"required": true}'/>
+                            <field name="scan_input" placeholder="Ingrese cédula y presione Escanear"
+                                   modifiers='{"required": true}'/>
+                        </group>
+                        <footer>
+                            <button name="action_scan" type="object" string="Escanear" class="btn-primary"/>
+                            <button string="Cerrar" class="btn-secondary" special="cancel"/>
+                        </footer>
+                    </group>
+                    <group>
+                        <separator string="Resultado" colspan="2"/>
+                        <field name="feedback_message" readonly="1"/>
+                        <field name="feedback_ok" readonly="1"/>
+                        <field name="student_name" readonly="1"/>
+                        <field name="career_name" readonly="1"/>
+                        <field name="student_home_campus_name" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

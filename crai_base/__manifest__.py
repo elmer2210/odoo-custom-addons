@@ -14,6 +14,7 @@
         "security/groups.xml",
         "security/ir.model.access.csv",
         "views/menu.xml",
+        "views/sites_views.xml",
         "views/campus_views.xml",
         "views/faculty_views.xml",
         "views/career_views.xml",

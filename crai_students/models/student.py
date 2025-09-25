@@ -23,7 +23,8 @@ class CraiStudent(models.Model):
     )
 
     # Vínculos CRAI
-    campus_id = fields.Many2one("crai.campus", string="Sede", required=True, index=True)
+    site_id = fields.Many2one('crai.site', string="Sede", index=True)
+    campus_id = fields.Many2one("crai.campus", string="Campus", required=True, index=True)
     faculty_id = fields.Many2one("crai.faculty", string="Facultad")
     career_id = fields.Many2one("crai.career", string="Carrera")
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú: ajusta parent si ya tienes un root CRAI -->
+    <menuitem id="menu_crai_reading_root" name="Accesos Sala de Lectura" sequence="40" parent="crai_base.menu_crai_root"/>
+
+    <record id="action_crai_reading_access" model="ir.actions.act_window">
+        <field name="name">Registros de Acceso</field>
+        <field name="res_model">crai.reading.access</field>
+        <field name="view_mode">tree,form,graph,pivot</field>
+        <field name="domain">[('campus_id.user_id','=', uid)]</field>
+        <field name="context">
+            {
+                "search_default_my_campuses": 1,
+                "graph_measure": "id",
+            }
+        </field>
+    </record>
+
+    <menuitem id="menu_crai_reading_access" name="Registros" parent="menu_crai_reading_root"
+              action="action_crai_reading_access" sequence="10"/>
+
+    <!-- Dashboard (graph/pivot con filtros preconfigurados) -->
+    <record id="action_crai_reading_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard</field>
+        <field name="res_model">crai.reading.access</field>
+        <field name="view_mode">graph,pivot,tree</field>
+        <field name="domain">[('campus_id.user_id','=', uid)]</field>
+        <field name="context">
+            {
+                "search_default_my_campuses": 1,
+                "graph_measure": "id",
+            }
+        </field>
+    </record>
+
+    <menuitem id="menu_crai_reading_dashboard" name="Dashboard" parent="menu_crai_reading_root"
+              action="action_crai_reading_dashboard" sequence="20"/>
+
+    <!-- Kiosk -->
+    <record id="action_crai_reading_kiosk" model="ir.actions.act_window">
+        <field name="name">Escaneo Pistola</field>
+        <field name="res_model">crai.reading.kiosk.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_crai_reading_kiosk" name="Kiosk (Escaneo)" parent="menu_crai_reading_root"
+              action="action_crai_reading_kiosk" sequence="5"/>
+</odoo>

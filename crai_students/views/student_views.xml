@@ -9,6 +9,7 @@
             <field name="display_name"/>
              <field name="number_id"/>
             <field name="email"/>
+            <field name="site_id"/>
             <field name="campus_id"/>
             <field name="faculty_id"/>
             <field name="career_id"/>
@@ -32,6 +33,7 @@
                 <field name="email"/>
             </group>
             <group string="Vinculación CRAI">
+                <field name="site_id" required="1"/>
                 <field name="campus_id" required="1"/>
                 <field name="faculty_id"/>
                 <field name="career_id"/>
@@ -71,13 +73,15 @@
                 <field name="display_name"/>
                 <field name="number_id"/>
                 <field name="email"/>
+                <field name="site_id"/>
                 <field name="campus_id"/>
                 <field name="faculty_id"/>
                 <field name="career_id"/>
 
                 <!-- Agrupar -->
                 <group string="Agrupar por">
-                    <filter name="group_by_campus" string="Sede" context="{'group_by':'campus_id'}"/>
+                    <filter name="group_by_site" string="Sede" context="{'group_by':'site_id'}"/>
+                    <filter name="group_by_campus" string="Campus" context="{'group_by':'campus_id'}"/>
                     <filter name="group_by_faculty" string="Facultad" context="{'group_by':'faculty_id'}"/>
                     <filter name="group_by_career" string="Carrera" context="{'group_by':'career_id'}"/>
                     <filter name="group_by_disability" string="Discapacidad" context="{'group_by':'has_disability'}"/>

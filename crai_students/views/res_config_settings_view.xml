@@ -5,25 +5,32 @@
     <field name="inherit_id" ref="base.res_config_settings_view_form"/>
     <field name="arch" type="xml">
       <!-- Odoo 17: contenedor estable -->
-        <xpath expr="//div[@id='companies']" position='inside'>
+        <xpath expr="//div[@id='companies']" position='after'>
             <div id="crai_students_settings" >
               <block title="Estudiantes APi" name="student_setting_container">
                 <setting id="student_setting">
                   <div >
                       <field name="crai_api_url" placeholder="https://.../estudiantes"/>
                       <field name="crai_api_token" password="True"/>
-                      <button name="action_dry_run_students_import"
-                              type="object"
-                              class="btn btn-primary mt-2"
-                              string="Probar (dry-run)"/>
                   </div>
                     <div>
                         <!-- Importante: label con 'for' apuntando a un field -->
                         <label for="crai_api_url" class="o_form_label">CRAI · Ingesta de Estudiantes</label>
                         <div class="text-muted">
-                        Configura la URL de la API (GET) que alimenta el maestro de estudiantes.
-                        La tarea programada crea <strong>solo estudiantes nuevos por cédula</strong>; los existentes se omiten.
+                          Usa <strong>Probar API</strong> para simular (no escribe).<br/>
+                          Usa <strong>Actualizar existentes</strong> para crear nuevos y actualizar alumnos ya existentes.
                         </div>
+                  </div>
+                </setting>
+                <setting id="buttons_student_api">
+                  <div class="w-50">
+                    <button type="object" class="btn btn-secondary"
+                      name="action_dry_run_students_import"
+                      string="Probar API (dry-run)"/>
+                    <br/><br/>    
+                    <button type="object" class="btn btn-primary"
+                      name="action_update_students_import"
+                      string="Actualizar existentes"/>
                   </div>
                 </setting>
               </block>    
