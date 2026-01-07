@@ -18,9 +18,9 @@ def normalize_code(val: str) -> str:
         return ""
     val = ''.join(c for c in unicodedata.normalize('NFKD', val) if not unicodedata.combining(c))
     val = val.upper().strip()
-    val = re.sub(r'\s+', '_', val)           # espacios -> _
-    val = re.sub(r'[^A-Z0-9_]', '', val)     # solo A-Z0-9_
-    val = re.sub(r'_+', '_', val)            # colapsa múltiples _
+    val = re.sub(r'\s+', '_', val)
+    val = re.sub(r'[^A-Z0-9_]', '', val)
+    val = re.sub(r'_+', '_', val)
     return val
 
 
@@ -60,8 +60,6 @@ class CraiStudentsIngestService(models.AbstractModel):
         """
         Lee JSON de Ajustes (ir.config_parameter):
         key: crai_students.career_current_faculty_map
-        Ejemplo:
-        {"DERECHO":"FACULTAD DE DERECHO","PSICOLOGIA CLINICA":"FACULTAD DE SALUD Y CULTURA FISICA"}
         """
         IrConfig = self.env["ir.config_parameter"].sudo()
         raw = (IrConfig.get_param("crai_students.career_current_faculty_map") or "").strip()
@@ -69,10 +67,8 @@ class CraiStudentsIngestService(models.AbstractModel):
             return {}
         try:
             data = json.loads(raw)
-            # normalizar claves a code normalizado
             return {normalize_code(k): normalize_name(v) for k, v in data.items() if v}
         except Exception:
-            # si está mal formateado, lo ignoramos
             return {}
 
     # -------------------------
@@ -122,7 +118,6 @@ class CraiStudentsIngestService(models.AbstractModel):
         name = normalize_name(car_descripcion)
         code = normalize_code(name) or "CAR"
 
-        # Busca por (faculty_id, code) -> evita colisiones globales
         domain = [("code", "=", code)]
         if faculty:
             domain.append(("faculty_id", "=", faculty.id))
@@ -134,7 +129,6 @@ class CraiStudentsIngestService(models.AbstractModel):
                 vals["faculty_id"] = faculty.id
             career = Career.create(vals)
         else:
-            # Mantén el name "bonito" si cambió
             if career.name != name:
                 career.write({"name": name})
         return career
@@ -144,9 +138,11 @@ class CraiStudentsIngestService(models.AbstractModel):
     # =========================
     @api.model
     def run_ingest(self, dry_run=False, update_existing=False):
+        """Punto de entrada principal para la ingesta."""
         IrConfig = self.env["ir.config_parameter"].sudo()
         url = (IrConfig.get_param("crai_students.api_url") or "").strip()
         token = (IrConfig.get_param("crai_students.api_token") or "").strip()
+        
         if not url:
             raise UserError(_("Configura la URL de la API en Ajustes (CRAI · Ingesta de Estudiantes)."))
 
@@ -164,31 +160,58 @@ class CraiStudentsIngestService(models.AbstractModel):
         items = (payload or {}).get("data") or []
         
         if dry_run:
-            # Para dry_run, creamos un nuevo cursor independiente
-            return self._run_ingest_dry_run(items, update_existing)
+            # Usar cursor independiente para dry_run
+            return self._run_with_new_cursor(items, update_existing)
         else:
+            # Modo normal con el cursor actual
             return self._process_items(items, update_existing, dry_run=False)
 
-    def _run_ingest_dry_run(self, items, update_existing):
-        """Ejecuta dry_run en un cursor separado para evitar contaminación."""
-        # Crear un nuevo environment con un cursor nuevo
-        with self.pool.cursor() as new_cr:
+    def _run_with_new_cursor(self, items, update_existing):
+        """Ejecuta el proceso en un cursor nuevo y lo descarta (para dry_run)."""
+        result = None
+        new_cr = None
+        
+        try:
+            # Crear nuevo cursor
+            new_cr = self.pool.cursor()
+            # Crear nuevo environment
             new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+            # Obtener el servicio en el nuevo environment
             service = new_env['crai.students.ingest.service']
             
-            try:
-                # Procesamos con el nuevo environment
-                result = service._process_items(items, update_existing, dry_run=True)
-                # IMPORTANTE: Hacemos rollback explícito del cursor
-                new_cr.rollback()
-                return result
-            except Exception as e:
-                _logger.exception("Error durante dry-run")
-                new_cr.rollback()
-                raise
+            # Procesar items
+            result = service._process_items(items, update_existing, dry_run=True)
+            
+            # IMPORTANTE: Siempre hacer rollback en dry_run
+            new_cr.rollback()
+            
+            return result
+            
+        except Exception as e:
+            _logger.exception("Error durante dry-run con nuevo cursor")
+            if new_cr:
+                try:
+                    new_cr.rollback()
+                except:
+                    pass
+            # Retornar resultado con error
+            return {
+                "total": len(items),
+                "create": 0,
+                "update": 0,
+                "skip": 0,
+                "errors": len(items)
+            }
+        finally:
+            # Cerrar el cursor
+            if new_cr:
+                try:
+                    new_cr.close()
+                except:
+                    pass
 
     def _process_items(self, items, update_existing, dry_run):
-        """Procesa los items sin savepoint individual por fila."""
+        """Procesa los items de la API."""
         Student = self.env["crai.student"].sudo()
 
         total = len(items)
@@ -197,7 +220,7 @@ class CraiStudentsIngestService(models.AbstractModel):
         skip = 0
         errors = 0
 
-        # Prefetch -> dict cedula -> id
+        # Prefetch de estudiantes existentes
         existing = Student.search_read([("number_id", "!=", False)], ["id", "number_id"])
         existing_map = {r["number_id"]: r["id"] for r in existing if r.get("number_id")}
 
@@ -205,21 +228,21 @@ class CraiStudentsIngestService(models.AbstractModel):
 
         for row in items:
             try:
-                cedula      = (row.get("cedula") or "").strip()
-                nombre      = (row.get("nombres_apellidos") or "").strip()
-                correo      = (row.get("correo_institucional") or "").strip()
-                sede        = (row.get("sed_descripcion") or "").strip()
+                cedula = (row.get("cedula") or "").strip()
+                nombre = (row.get("nombres_apellidos") or "").strip()
+                correo = (row.get("correo_institucional") or "").strip()
+                sede = (row.get("sed_descripcion") or "").strip()
                 campus_desc = (row.get("cam_descripcion") or "").strip()
-                fac_desc    = (row.get("fac_descripcion") or "").strip()
-                car_desc    = (row.get("car_descripcion") or "").strip()
-                discap      = row.get("discapacidad")
-                tipo        = row.get("tipo_discapacidad")
+                fac_desc = (row.get("fac_descripcion") or "").strip()
+                car_desc = (row.get("car_descripcion") or "").strip()
+                discap = row.get("discapacidad")
+                tipo = row.get("tipo_discapacidad")
 
                 if not cedula:
                     skip += 1
                     continue
 
-                # Catálogos
+                # Crear/obtener catálogos
                 site = self._ensure_site(sede)
                 campus_rec = self._ensure_campus(campus_desc, site)
 
@@ -233,7 +256,7 @@ class CraiStudentsIngestService(models.AbstractModel):
 
                 has_dis, dis_type = self._norm_discapacidad(discap, tipo)
 
-                # EXISTE -> actualizar (si se pidió)
+                # EXISTE -> actualizar
                 if cedula in existing_map:
                     if update_existing:
                         stu = Student.browse(existing_map[cedula])
@@ -290,12 +313,20 @@ class CraiStudentsIngestService(models.AbstractModel):
 
             except Exception as e:
                 errors += 1
-                _logger.exception("Fila con error (cedula=%s): %s | row=%s", cedula, e, row)
+                _logger.exception("Error procesando fila (cedula=%s): %s", cedula, e)
                 continue
 
-        return {"total": total, "create": create, "update": update, "skip": skip, "errors": errors}
+        return {
+            "total": total,
+            "create": create,
+            "update": update,
+            "skip": skip,
+            "errors": errors
+        }
+
     # cron entrypoint
     @api.model
     def cron_ingest_students_every_3_months(self):
-        self.run_ingest(dry_run=False)
+        """Tarea programada para importar estudiantes."""
+        self.run_ingest(dry_run=False, update_existing=True)
         return True
