@@ -114,12 +114,12 @@ class ReadingAccess(models.Model):
         Student = self.env["crai.student"].sudo()
         student = Student.find_by_document(number_id)
         if not student:
-            return {"ok": False, "message": _("Student not found."), "record_id": False}
+            return {"ok": False, "message": _("El estudiante no existe."), "record_id": False}
 
         if not campus_id:
             campus_id = self._default_campus()
         if not campus_id:
-            return {"ok": False, "message": _("Select a campus."), "record_id": False}
+            return {"ok": False, "message": _("Seleccione una sede."), "record_id": False}
 
         # Librarian solo en sus sedes
         if self.env.user.has_group("crai_base.group_crai_librarian") and \
@@ -168,7 +168,35 @@ class ReadingKioskWizard(models.TransientModel):
     career_name = fields.Char(readonly=True)
     student_home_campus_name = fields.Char(readonly=True)
 
+    # AGREGAR ESTE ONCHANGE
+    @api.onchange('scan_input')
+    def _onchange_scan_input(self):
+        """Se dispara automáticamente cuando el escáner ingresa el código"""
+        if self.scan_input and len(self.scan_input.strip()) > 0:
+            number = self.scan_input.strip()
+            
+            if not self.campus_id:
+                self.feedback_ok = False
+                self.feedback_message = _("Seleccione un campus primero.")
+                return
+            
+            Access = self.env["crai.reading.access"].sudo()
+            result = Access.scan_document(number, self.campus_id.id)
+            
+            # Actualizar feedback
+            self.feedback_ok = bool(result.get("ok"))
+            self.feedback_message = result.get("message")
+            
+            student_data = result.get("student") or {}
+            self.student_name = student_data.get("name")
+            self.career_name = student_data.get("career")
+            self.student_home_campus_name = student_data.get("home_campus")
+            
+            # Limpiar el campo para siguiente escaneo
+            self.scan_input = ""
+
     def action_scan(self):
+        # Mantener este método por si quieren usar el botón manualmente
         self.ensure_one()
         number = (self.scan_input or "").strip()
         if not number:
@@ -194,7 +222,7 @@ class ReadingKioskWizard(models.TransientModel):
             "feedback_message": result.get("message"),
             "student_name": (result.get("student") or {}).get("name"),
             "career_name": (result.get("student") or {}).get("career"),
-            "student_home_campus_name": (result.get("student") or {}).get("student_home_campus_id"),
+            "student_home_campus_name": (result.get("student") or {}).get("home_campus"),
         })
         return {
             "type": "ir.actions.act_window",
@@ -202,43 +230,4 @@ class ReadingKioskWizard(models.TransientModel):
             "view_mode": "form",
             "res_id": new.id,
             "target": "new",
-        }
-    @api.model
-    def scan_document(self, number_id, campus_id):
-        if not number_id:
-            return {"ok": False, "message": _("Empty document number."), "record_id": False}
-
-        Student = self.env["crai.student"].sudo()
-        student = Student.find_by_document(number_id)
-        if not student:
-            return {"ok": False, "message": _("Student not found."), "record_id": False}
-
-        duplicate_seconds = self._get_cfg_int("reading_access.duplicate_window_seconds", 10)
-        now = fields.Datetime.now()
-        last = self.search([("student_id", "=", student.id)], order="occurred_at desc", limit=1)
-        if last and (now - last.occurred_at).total_seconds() < duplicate_seconds:
-            return {
-                "ok": False,
-                "message": _("Duplicate scan ignored (within %s sec).") % duplicate_seconds,
-                "record_id": last.id,
-                "student": {"name": student.name, "career": getattr(student.career_id, "name", False),
-                            "home_campus": getattr(student.campus_id, "name", False)},
-            }
-
-        rec = self.create({
-            "student_id": student.id,
-            "campus_id": campus_id,          # campus de la biblioteca seleccionado
-            "source": "kiosk",
-            "occurred_at": now,
-            "operator_id": self.env.user.id,
-        })
-        return {
-            "ok": True,
-            "message": _("Entry registered."),
-            "record_id": rec.id,
-            "student": {
-                "name": student.name,
-                "career": getattr(student.career_id, "name", False),
-                "home_campus": getattr(student.campus_id, "name", False),
-            },
         }

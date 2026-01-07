@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="param_session_timeout" model="ir.config_parameter">
+    <field name="key">crai_computers.session_timeout_minutes</field>
+    <field name="value">2</field>
+  </record>
+</odoo>

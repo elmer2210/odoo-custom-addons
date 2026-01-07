@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_crai_computer_session_tree" model="ir.ui.view">
+    <field name="name">crai.computer.session.tree</field>
+    <field name="model">crai.computer.session</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="state"/>
+        <field name="computer_id"/>
+        <field name="student_id"/>
+        <field name="start_at"/>
+        <field name="end_at"/>
+        <field name="duration_minutes"/>
+        <field name="last_seen"/>
+        <field name="site_id"/>
+        <field name="campus_id"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_crai_computer_session_form" model="ir.ui.view">
+    <field name="name">crai.computer.session.form</field>
+    <field name="model">crai.computer.session</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="state" readonly="1"/>
+            <field name="computer_id" required="1"/>
+            <field name="student_id" required="1" options="{'no_create': True}"/>
+          </group>
+          <group>
+            <field name="start_at"/>
+            <field name="end_at"/>
+            <field name="duration_minutes" readonly="1"/>
+            <field name="last_seen" readonly="1"/>
+          </group>
+          <group string="Contexto">
+            <field name="site_id" readonly="1"/>
+            <field name="campus_id" readonly="1"/>
+          </group>
+          <field name="note"/>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_crai_computer_session" model="ir.actions.act_window">
+    <field name="name">Sesiones</field>
+    <field name="res_model">crai.computer.session</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <menuitem id="menu_crai_computer_sessions" name="Sesiones"
+            parent="menu_crai_computers_root" action="action_crai_computer_session"/>
+</odoo>

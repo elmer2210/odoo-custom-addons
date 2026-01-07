@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="group_crai_library_staff" model="res.groups">
+    <field name="name">CRAI Library Staff</field>
+    <field name="category_id" ref="base.module_category_services"/>
+  </record>
+</odoo>

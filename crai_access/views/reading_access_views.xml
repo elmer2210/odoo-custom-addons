@@ -115,7 +115,7 @@
                         <group>
                             <field name="campus_id" modifiers='{"required": true}'/>
                             <field name="scan_input" placeholder="Ingrese cédula y presione Escanear"
-                                   modifiers='{"required": true}'/>
+                                   autofocus="1"/>
                         </group>
                         <footer>
                             <button name="action_scan" type="object" string="Escanear" class="btn-primary"/>

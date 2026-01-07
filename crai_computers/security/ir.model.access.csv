@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crai_computer_staff,access_crai_computer_staff,model_crai_computer,crai_computers.group_crai_library_staff,1,1,1,0
+access_crai_computer_admin,access_crai_computer_admin,model_crai_computer,base.group_system,1,1,1,1
+access_crai_computer_session_staff,access_crai_computer_session_staff,model_crai_computer_session,crai_computers.group_crai_library_staff,1,1,1,0
+access_crai_computer_session_admin,access_crai_computer_session_admin,model_crai_computer_session,base.group_system,1,1,1,1

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="view_crai_computer_tree" model="ir.ui.view">
+    <field name="name">crai.computer.tree</field>
+    <field name="model">crai.computer</field>
+    <field name="arch" type="xml">
+      <tree>
+        <field name="name"/>
+        <field name="code"/>
+        <field name="site_id"/>
+        <field name="campus_id"/>
+        <field name="is_active"/>
+        <field name="active_session_count"/>
+      </tree>
+    </field>
+  </record>
+
+  <record id="view_crai_computer_form" model="ir.ui.view">
+    <field name="name">crai.computer.form</field>
+    <field name="model">crai.computer</field>
+    <field name="arch" type="xml">
+      <form>
+        <sheet>
+          <group>
+            <field name="name"/>
+            <field name="code"/>
+            <field name="site_id"/>
+            <field name="campus_id"/>
+            <field name="is_active"/>
+          </group>
+          <group string="Sesión actual">
+            <field name="current_session_id" readonly="1"/>
+            <field name="active_session_count" readonly="1"/>
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+
+  <record id="action_crai_computer" model="ir.actions.act_window">
+    <field name="name">Computadoras</field>
+    <field name="res_model">crai.computer</field>
+    <field name="view_mode">tree,form</field>
+  </record>
+
+  <menuitem id="menu_crai_computers_root" name="Computadoras" sequence="30"/>
+  <menuitem id="menu_crai_computers" name="Equipos"
+            parent="menu_crai_computers_root" action="action_crai_computer"/>
+</odoo>
