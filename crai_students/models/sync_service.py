@@ -163,29 +163,29 @@ class CraiStudentsIngestService(models.AbstractModel):
 
         items = (payload or {}).get("data") or []
         
-        # Si es dry_run, envolvemos TODO el proceso en un savepoint
         if dry_run:
-            return self._run_ingest_with_rollback(items, update_existing)
+            # Para dry_run, creamos un nuevo cursor independiente
+            return self._run_ingest_dry_run(items, update_existing)
         else:
             return self._process_items(items, update_existing, dry_run=False)
 
-    def _run_ingest_with_rollback(self, items, update_existing):
-        """Ejecuta la ingesta en un savepoint y hace rollback al final (dry_run)."""
-        try:
-            with self.env.cr.savepoint():
-                result = self._process_items(items, update_existing, dry_run=True)
-                # Forzamos una excepción para hacer rollback
-                raise UserError("DRY_RUN_ROLLBACK")
-        except UserError as e:
-            if "DRY_RUN_ROLLBACK" in str(e):
-                # Es nuestro rollback intencional, devolvemos el resultado
+    def _run_ingest_dry_run(self, items, update_existing):
+        """Ejecuta dry_run en un cursor separado para evitar contaminación."""
+        # Crear un nuevo environment con un cursor nuevo
+        with self.pool.cursor() as new_cr:
+            new_env = api.Environment(new_cr, self.env.uid, self.env.context)
+            service = new_env['crai.students.ingest.service']
+            
+            try:
+                # Procesamos con el nuevo environment
+                result = service._process_items(items, update_existing, dry_run=True)
+                # IMPORTANTE: Hacemos rollback explícito del cursor
+                new_cr.rollback()
                 return result
-            else:
-                # Es un error real, lo re-lanzamos
+            except Exception as e:
+                _logger.exception("Error durante dry-run")
+                new_cr.rollback()
                 raise
-        except Exception as e:
-            _logger.exception("Error durante dry-run")
-            raise
 
     def _process_items(self, items, update_existing, dry_run):
         """Procesa los items sin savepoint individual por fila."""
@@ -257,11 +257,10 @@ class CraiStudentsIngestService(models.AbstractModel):
                         if (getattr(stu, "disability_type", False) or False) != (dis_type or False):
                             vals_update["disability_type"] = dis_type or False
 
-                        if vals_update and not dry_run:
-                            stu.write(vals_update)
+                        if vals_update:
+                            if not dry_run:
+                                stu.write(vals_update)
                             update += 1
-                        elif vals_update and dry_run:
-                            update += 1  # Cuenta como "se actualizaría"
                         else:
                             skip += 1
                     else:
@@ -295,7 +294,6 @@ class CraiStudentsIngestService(models.AbstractModel):
                 continue
 
         return {"total": total, "create": create, "update": update, "skip": skip, "errors": errors}
-
     # cron entrypoint
     @api.model
     def cron_ingest_students_every_3_months(self):
