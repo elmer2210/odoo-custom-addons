@@ -168,7 +168,6 @@ class CraiStudentsIngestService(models.AbstractModel):
 
     def _run_with_new_cursor(self, items, update_existing):
         """Ejecuta el proceso en un cursor nuevo y lo descarta (para dry_run)."""
-        result = None
         new_cr = None
         
         try:
@@ -179,8 +178,8 @@ class CraiStudentsIngestService(models.AbstractModel):
             # Obtener el servicio en el nuevo environment
             service = new_env['crai.students.ingest.service']
             
-            # Procesar items
-            result = service._process_items(items, update_existing, dry_run=True)
+            # Procesar items CON MANEJO DE ERRORES POR ITEM
+            result = service._process_items_safe(items, update_existing, new_cr)
             
             # IMPORTANTE: Siempre hacer rollback en dry_run
             new_cr.rollback()
@@ -188,7 +187,7 @@ class CraiStudentsIngestService(models.AbstractModel):
             return result
             
         except Exception as e:
-            _logger.exception("Error durante dry-run con nuevo cursor")
+            _logger.exception("Error crítico durante dry-run")
             if new_cr:
                 try:
                     new_cr.rollback()
@@ -210,8 +209,125 @@ class CraiStudentsIngestService(models.AbstractModel):
                 except:
                     pass
 
+    def _process_items_safe(self, items, update_existing, cursor):
+        """Procesa items con savepoints individuales para aislar errores."""
+        Student = self.env["crai.student"].sudo()
+
+        total = len(items)
+        create = 0
+        update = 0
+        skip = 0
+        errors = 0
+
+        # Prefetch de estudiantes existentes
+        existing = Student.search_read([("number_id", "!=", False)], ["id", "number_id"])
+        existing_map = {r["number_id"]: r["id"] for r in existing if r.get("number_id")}
+
+        career_to_current_faculty = self._get_current_faculty_map()
+
+        # IMPORTANTE: Procesar cada item en su propio savepoint
+        for row in items:
+            cedula = (row.get("cedula") or "").strip()
+            
+            # Usar savepoint para aislar errores de cada fila
+            try:
+                with cursor.savepoint():
+                    nombre = (row.get("nombres_apellidos") or "").strip()
+                    correo = (row.get("correo_institucional") or "").strip()
+                    sede = (row.get("sed_descripcion") or "").strip()
+                    campus_desc = (row.get("cam_descripcion") or "").strip()
+                    fac_desc = (row.get("fac_descripcion") or "").strip()
+                    car_desc = (row.get("car_descripcion") or "").strip()
+                    discap = row.get("discapacidad")
+                    tipo = row.get("tipo_discapacidad")
+
+                    if not cedula:
+                        skip += 1
+                        continue
+
+                    # Crear/obtener catálogos
+                    site = self._ensure_site(sede)
+                    campus_rec = self._ensure_campus(campus_desc, site)
+
+                    car_code_norm = normalize_code(car_desc)
+                    mapped_fac_name = career_to_current_faculty.get(car_code_norm)
+                    if mapped_fac_name:
+                        faculty_effective = self._ensure_faculty(mapped_fac_name)
+                    else:
+                        faculty_effective = self._ensure_faculty(fac_desc)
+                    career_rec = self._ensure_career(car_desc, faculty_effective)
+
+                    has_dis, dis_type = self._norm_discapacidad(discap, tipo)
+
+                    # EXISTE -> actualizar
+                    if cedula in existing_map:
+                        if update_existing:
+                            stu = Student.browse(existing_map[cedula])
+                            vals_update = {}
+
+                            new_name = nombre or correo or cedula
+                            if stu.name != new_name:
+                                vals_update["name"] = new_name
+                            if (stu.email or False) != (correo or False):
+                                vals_update["email"] = correo or False
+                            if "site_id" in Student._fields and (stu.site_id.id or False) != (site.id if site else False):
+                                vals_update["site_id"] = site and site.id
+                            if (stu.campus_id.id or False) != (campus_rec.id if campus_rec else False):
+                                vals_update["campus_id"] = campus_rec and campus_rec.id
+                            if (stu.faculty_id.id or False) != (faculty_effective.id if faculty_effective else False):
+                                vals_update["faculty_id"] = faculty_effective and faculty_effective.id
+                            if (stu.career_id.id or False) != (career_rec.id if career_rec else False):
+                                vals_update["career_id"] = career_rec and career_rec.id
+                            if bool(getattr(stu, "has_disability", False)) != bool(has_dis):
+                                vals_update["has_disability"] = bool(has_dis)
+                            if (getattr(stu, "disability_type", False) or False) != (dis_type or False):
+                                vals_update["disability_type"] = dis_type or False
+
+                            if vals_update:
+                                stu.write(vals_update)
+                                update += 1
+                            else:
+                                skip += 1
+                        else:
+                            skip += 1
+                        continue
+
+                    # NUEVO -> crear
+                    vals_create = {
+                        "name": nombre or correo or cedula,
+                        "number_id": cedula,
+                        "email": correo or False,
+                        "campus_id": campus_rec and campus_rec.id,
+                        "faculty_id": faculty_effective and faculty_effective.id,
+                        "career_id": career_rec and career_rec.id,
+                        "has_disability": bool(has_dis),
+                        "disability_type": dis_type or False,
+                        "external_source": "umet_api",
+                        "external_ref": cedula,
+                        "active": True,
+                    }
+                    if "site_id" in Student._fields:
+                        vals_create["site_id"] = site and site.id
+
+                    Student.create(vals_create)
+                    create += 1
+
+            except Exception as e:
+                errors += 1
+                _logger.error("Error procesando fila (cedula=%s): %s", cedula, str(e))
+                # El savepoint hace rollback automático en caso de error
+                continue
+
+        return {
+            "total": total,
+            "create": create,
+            "update": update,
+            "skip": skip,
+            "errors": errors
+        }
+
     def _process_items(self, items, update_existing, dry_run):
-        """Procesa los items de la API."""
+        """Procesa los items de la API (modo normal, SIN savepoints)."""
         Student = self.env["crai.student"].sudo()
 
         total = len(items)
@@ -281,8 +397,7 @@ class CraiStudentsIngestService(models.AbstractModel):
                             vals_update["disability_type"] = dis_type or False
 
                         if vals_update:
-                            if not dry_run:
-                                stu.write(vals_update)
+                            stu.write(vals_update)
                             update += 1
                         else:
                             skip += 1
@@ -307,13 +422,12 @@ class CraiStudentsIngestService(models.AbstractModel):
                 if "site_id" in Student._fields:
                     vals_create["site_id"] = site and site.id
 
-                if not dry_run:
-                    Student.create(vals_create)
+                Student.create(vals_create)
                 create += 1
 
             except Exception as e:
                 errors += 1
-                _logger.exception("Error procesando fila (cedula=%s): %s", cedula, e)
+                _logger.exception("Error procesando fila (cedula=%s)", cedula)
                 continue
 
         return {
