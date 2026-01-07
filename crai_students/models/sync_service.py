@@ -134,7 +134,7 @@ class CraiStudentsIngestService(models.AbstractModel):
                 vals["faculty_id"] = faculty.id
             career = Career.create(vals)
         else:
-            # Mantén el name “bonito” si cambió
+            # Mantén el name "bonito" si cambió
             if career.name != name:
                 career.write({"name": name})
         return career
@@ -162,6 +162,33 @@ class CraiStudentsIngestService(models.AbstractModel):
             raise UserError(_("Error llamando API de estudiantes: %s") % e)
 
         items = (payload or {}).get("data") or []
+        
+        # Si es dry_run, envolvemos TODO el proceso en un savepoint
+        if dry_run:
+            return self._run_ingest_with_rollback(items, update_existing)
+        else:
+            return self._process_items(items, update_existing, dry_run=False)
+
+    def _run_ingest_with_rollback(self, items, update_existing):
+        """Ejecuta la ingesta en un savepoint y hace rollback al final (dry_run)."""
+        try:
+            with self.env.cr.savepoint():
+                result = self._process_items(items, update_existing, dry_run=True)
+                # Forzamos una excepción para hacer rollback
+                raise UserError("DRY_RUN_ROLLBACK")
+        except UserError as e:
+            if "DRY_RUN_ROLLBACK" in str(e):
+                # Es nuestro rollback intencional, devolvemos el resultado
+                return result
+            else:
+                # Es un error real, lo re-lanzamos
+                raise
+        except Exception as e:
+            _logger.exception("Error durante dry-run")
+            raise
+
+    def _process_items(self, items, update_existing, dry_run):
+        """Procesa los items sin savepoint individual por fila."""
         Student = self.env["crai.student"].sudo()
 
         total = len(items)
@@ -170,102 +197,103 @@ class CraiStudentsIngestService(models.AbstractModel):
         skip = 0
         errors = 0
 
-        # Prefetch -> dict cedula -> id  (NO set)
+        # Prefetch -> dict cedula -> id
         existing = Student.search_read([("number_id", "!=", False)], ["id", "number_id"])
         existing_map = {r["number_id"]: r["id"] for r in existing if r.get("number_id")}
 
         career_to_current_faculty = self._get_current_faculty_map()
 
         for row in items:
-            with self.env.cr.savepoint():
-                try:
-                    cedula      = (row.get("cedula") or "").strip()
-                    nombre      = (row.get("nombres_apellidos") or "").strip()
-                    correo      = (row.get("correo_institucional") or "").strip()
-                    sede        = (row.get("sed_descripcion") or "").strip()    # Sede (texto)
-                    campus_desc = (row.get("cam_descripcion") or "").strip()    # Campus (texto)
-                    fac_desc    = (row.get("fac_descripcion") or "").strip()
-                    car_desc    = (row.get("car_descripcion") or "").strip()
-                    discap      = row.get("discapacidad")
-                    tipo        = row.get("tipo_discapacidad")
+            try:
+                cedula      = (row.get("cedula") or "").strip()
+                nombre      = (row.get("nombres_apellidos") or "").strip()
+                correo      = (row.get("correo_institucional") or "").strip()
+                sede        = (row.get("sed_descripcion") or "").strip()
+                campus_desc = (row.get("cam_descripcion") or "").strip()
+                fac_desc    = (row.get("fac_descripcion") or "").strip()
+                car_desc    = (row.get("car_descripcion") or "").strip()
+                discap      = row.get("discapacidad")
+                tipo        = row.get("tipo_discapacidad")
 
-                    if not cedula:
-                        skip += 1
-                        continue
+                if not cedula:
+                    skip += 1
+                    continue
 
-                    # Catálogos (seguros ante falta de crai.site o site_id)
-                    site = self._ensure_site(sede)                               # None si no existe el modelo
-                    campus_rec = self._ensure_campus(campus_desc, site)
+                # Catálogos
+                site = self._ensure_site(sede)
+                campus_rec = self._ensure_campus(campus_desc, site)
 
-                    car_code_norm = normalize_code(car_desc)
-                    mapped_fac_name = career_to_current_faculty.get(car_code_norm)
-                    if mapped_fac_name:
-                        faculty_effective = self._ensure_faculty(mapped_fac_name)
-                    else:
-                        faculty_effective = self._ensure_faculty(fac_desc)
-                    career_rec = self._ensure_career(car_desc, faculty_effective)
+                car_code_norm = normalize_code(car_desc)
+                mapped_fac_name = career_to_current_faculty.get(car_code_norm)
+                if mapped_fac_name:
+                    faculty_effective = self._ensure_faculty(mapped_fac_name)
+                else:
+                    faculty_effective = self._ensure_faculty(fac_desc)
+                career_rec = self._ensure_career(car_desc, faculty_effective)
 
-                    has_dis, dis_type = self._norm_discapacidad(discap, tipo)
+                has_dis, dis_type = self._norm_discapacidad(discap, tipo)
 
-                    # EXISTE -> actualizar (si se pidió)
-                    if cedula in existing_map:
-                        if update_existing:
-                            stu = Student.browse(existing_map[cedula])
-                            vals_update = {}
+                # EXISTE -> actualizar (si se pidió)
+                if cedula in existing_map:
+                    if update_existing:
+                        stu = Student.browse(existing_map[cedula])
+                        vals_update = {}
 
-                            new_name = nombre or correo or cedula
-                            if stu.name != new_name:
-                                vals_update["name"] = new_name
-                            if (stu.email or False) != (correo or False):
-                                vals_update["email"] = correo or False
-                            if "site_id" in Student._fields and (stu.site_id.id or False) != (site.id if site else False):
-                                vals_update["site_id"] = site and site.id
-                            if (stu.campus_id.id or False) != (campus_rec.id if campus_rec else False):
-                                vals_update["campus_id"] = campus_rec and campus_rec.id
-                            if (stu.faculty_id.id or False) != (faculty_effective.id if faculty_effective else False):
-                                vals_update["faculty_id"] = faculty_effective and faculty_effective.id
-                            if (stu.career_id.id or False) != (career_rec.id if career_rec else False):
-                                vals_update["career_id"] = career_rec and career_rec.id
-                            if bool(getattr(stu, "has_disability", False)) != bool(has_dis):
-                                vals_update["has_disability"] = bool(has_dis)
-                            if (getattr(stu, "disability_type", False) or False) != (dis_type or False):
-                                vals_update["disability_type"] = dis_type or False
+                        new_name = nombre or correo or cedula
+                        if stu.name != new_name:
+                            vals_update["name"] = new_name
+                        if (stu.email or False) != (correo or False):
+                            vals_update["email"] = correo or False
+                        if "site_id" in Student._fields and (stu.site_id.id or False) != (site.id if site else False):
+                            vals_update["site_id"] = site and site.id
+                        if (stu.campus_id.id or False) != (campus_rec.id if campus_rec else False):
+                            vals_update["campus_id"] = campus_rec and campus_rec.id
+                        if (stu.faculty_id.id or False) != (faculty_effective.id if faculty_effective else False):
+                            vals_update["faculty_id"] = faculty_effective and faculty_effective.id
+                        if (stu.career_id.id or False) != (career_rec.id if career_rec else False):
+                            vals_update["career_id"] = career_rec and career_rec.id
+                        if bool(getattr(stu, "has_disability", False)) != bool(has_dis):
+                            vals_update["has_disability"] = bool(has_dis)
+                        if (getattr(stu, "disability_type", False) or False) != (dis_type or False):
+                            vals_update["disability_type"] = dis_type or False
 
-                            if vals_update and not dry_run:
-                                stu.write(vals_update)
-                                update += 1
-                            else:
-                                skip += 1
+                        if vals_update and not dry_run:
+                            stu.write(vals_update)
+                            update += 1
+                        elif vals_update and dry_run:
+                            update += 1  # Cuenta como "se actualizaría"
                         else:
                             skip += 1
-                        continue  # importante
-
-                    # NUEVO -> crear
-                    vals_create = {
-                        "name": nombre or correo or cedula,
-                        "number_id": cedula,
-                        "email": correo or False,
-                        "campus_id": campus_rec and campus_rec.id,
-                        "faculty_id": faculty_effective and faculty_effective.id,
-                        "career_id": career_rec and career_rec.id,
-                        "has_disability": bool(has_dis),
-                        "disability_type": dis_type or False,
-                        "external_source": "umet_api",
-                        "external_ref": cedula,
-                        "active": True,
-                    }
-                    # solo setear site_id si ese campo EXISTE en crai.student
-                    if "site_id" in Student._fields:
-                        vals_create["site_id"] = site and site.id
-
-                    if not dry_run:
-                        Student.create(vals_create)
-                    create += 1
-
-                except Exception as e:
-                    errors += 1
-                    _logger.exception("Fila con error (cedula=%s): %s | row=%s", cedula, e, row)
+                    else:
+                        skip += 1
                     continue
+
+                # NUEVO -> crear
+                vals_create = {
+                    "name": nombre or correo or cedula,
+                    "number_id": cedula,
+                    "email": correo or False,
+                    "campus_id": campus_rec and campus_rec.id,
+                    "faculty_id": faculty_effective and faculty_effective.id,
+                    "career_id": career_rec and career_rec.id,
+                    "has_disability": bool(has_dis),
+                    "disability_type": dis_type or False,
+                    "external_source": "umet_api",
+                    "external_ref": cedula,
+                    "active": True,
+                }
+                if "site_id" in Student._fields:
+                    vals_create["site_id"] = site and site.id
+
+                if not dry_run:
+                    Student.create(vals_create)
+                create += 1
+
+            except Exception as e:
+                errors += 1
+                _logger.exception("Fila con error (cedula=%s): %s | row=%s", cedula, e, row)
+                continue
+
         return {"total": total, "create": create, "update": update, "skip": skip, "errors": errors}
 
     # cron entrypoint
