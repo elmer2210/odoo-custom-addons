@@ -1,7 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
-  <record id="param_session_timeout" model="ir.config_parameter">
-    <field name="key">crai_computers.session_timeout_minutes</field>
-    <field name="value">2</field>
-  </record>
+  <data noupdate="1">
+    <!-- Timeout de inactividad: si no hay heartbeat en X minutos, se cierra la sesión -->
+    <record id="config_session_timeout_minutes" model="ir.config_parameter">
+        <field name="key">crai_computers.session_timeout_minutes</field>
+        <field name="value">15</field>  <!-- 15 minutos sin heartbeat = cerrar sesión -->
+    </record>
+
+    <!-- Intervalo recomendado para que la app envíe heartbeat -->
+    <record id="config_heartbeat_interval_seconds" model="ir.config_parameter">
+        <field name="key">crai_computers.heartbeat_interval_seconds</field>
+        <field name="value">60</field>  <!-- La app debe enviar heartbeat cada 60 segundos -->
+    </record>
+  </data>
 </odoo>
