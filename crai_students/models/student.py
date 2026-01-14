@@ -1,5 +1,6 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
+import re
 
 class CraiStudent(models.Model):
     _name = "crai.student"
@@ -69,11 +70,22 @@ class CraiStudent(models.Model):
     # --------- API estable para otros módulos ----------
     @api.model
     def find_by_document(self, number_id):
-        """Búsqueda por cédula."""
-        doc = (number_id or "").strip()
-        if not doc:
+        """
+        Busca estudiante por número de documento.
+        Soporta formato completo del carnet con letras adicionales.
+        """
+        if not number_id:
             return self.browse()
-        return self.search([("number_id", "=", doc)], limit=1)
+        
+        # ✅ Limpiar: extraer solo números
+        import re
+        clean_number = re.sub(r'\D', '', str(number_id))
+        
+        if not clean_number:
+            return self.browse()
+        
+        # Buscar por número de cédula limpio
+        return self.search([('number_id', '=', clean_number)], limit=1)
 
     @api.model
     def find_by_barcode(self, barcode):

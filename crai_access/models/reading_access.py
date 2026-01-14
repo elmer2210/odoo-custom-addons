@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
+import re
 
 class ReadingAccess(models.Model):
     _name = "crai.reading.access"
@@ -175,13 +176,37 @@ class ReadingKioskWizard(models.TransientModel):
         if self.scan_input and len(self.scan_input.strip()) > 0:
             number = self.scan_input.strip()
             
+            # ✅ NUEVO: Limpiar el código - extraer solo números
+            import re
+            clean_number = re.sub(r'\D', '', number)  # Elimina todo excepto dígitos
+            
+            # ✅ Validar que tenga al menos contenido
+            if not clean_number:
+                self.feedback_ok = False
+                self.feedback_message = _("Código inválido: no contiene números.")
+                self.scan_input = ""
+                return
+            
+            # ✅ Opcional: Validar que tenga al menos 10 dígitos (cédula ecuatoriana)
+            if len(clean_number) < 10:
+                self.feedback_ok = False
+                self.feedback_message = _("Código inválido: debe tener al menos 10 dígitos.")
+                self.scan_input = ""
+                return
+            
+            # ✅ Opcional: Tomar solo los primeros 10 dígitos
+            if len(clean_number) > 10:
+                clean_number = clean_number[:10]
+            
             if not self.campus_id:
                 self.feedback_ok = False
                 self.feedback_message = _("Seleccione un campus primero.")
+                self.scan_input = ""
                 return
             
             Access = self.env["crai.reading.access"].sudo()
-            result = Access.scan_document(number, self.campus_id.id)
+            # ✅ CAMBIO: Pasar el número limpio en lugar del original
+            result = Access.scan_document(clean_number, self.campus_id.id)
             
             # Actualizar feedback
             self.feedback_ok = bool(result.get("ok"))
