@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú principal -->
+    <menuitem id="menu_crai_donations_root" 
+              name="Donaciones" 
+              parent="crai_base.menu_crai_root" 
+              sequence="30"/>
+
+    <!-- Acción principal de donaciones -->
+    <record id="action_crai_donation" model="ir.actions.act_window">
+        <field name="name">Solicitudes de Donación</field>
+        <field name="res_model">crai.donation</field>
+        <field name="view_mode">tree,form,pivot,graph,calendar</field>
+        <field name="context">{
+            'search_default_my_campus': 1,
+            'search_default_filter_submitted': 1,
+        }</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Registre una nueva solicitud de donación
+            </p>
+            <p>
+                Gestione las donaciones de libros individuales, grupales o externas.<br/>
+                Los bibliotecarios pueden crear solicitudes y los aprobadores las revisan.
+            </p>
+        </field>
+    </record>
+
+    <!-- Submenú: Todas las solicitudes -->
+    <menuitem id="menu_crai_donations_all" 
+              name="Todas las Solicitudes" 
+              parent="menu_crai_donations_root"
+              action="action_crai_donation" 
+              sequence="10"/>
+
+    <!-- Acción: Donaciones pendientes de aprobación -->
+    <record id="action_crai_donation_pending" model="ir.actions.act_window">
+        <field name="name">Pendientes de Aprobación</field>
+        <field name="res_model">crai.donation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'submitted')]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_crai_donations_pending" 
+              name="Pendientes de Aprobación" 
+              parent="menu_crai_donations_root"
+              action="action_crai_donation_pending" 
+              sequence="20"
+              groups="crai_base.group_crai_donation_approver"/>
+
+    <!-- Acción: Mis donaciones (bibliotecario) -->
+    <record id="action_crai_donation_mine" model="ir.actions.act_window">
+        <field name="name">Mis Solicitudes</field>
+        <field name="res_model">crai.donation</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('librarian_id', '=', uid)]</field>
+        <field name="context">{}</field>
+    </record>
+
+    <menuitem id="menu_crai_donations_mine" 
+              name="Mis Solicitudes" 
+              parent="menu_crai_donations_root"
+              action="action_crai_donation_mine" 
+              sequence="15"
+              groups="crai_base.group_crai_librarian"/>
+
+    <!-- Acción: Dashboard/Reportes -->
+    <record id="action_crai_donation_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboard de Donaciones</field>
+        <field name="res_model">crai.donation</field>
+        <field name="view_mode">graph,pivot</field>
+        <field name="context">{
+            'search_default_group_by_state': 1,
+            'search_default_group_by_type': 1,
+        }</field>
+    </record>
+
+    <menuitem id="menu_crai_donations_dashboard" 
+              name="Dashboard" 
+              parent="menu_crai_donations_root"
+              action="action_crai_donation_dashboard" 
+              sequence="90"/>
+</odoo>

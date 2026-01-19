@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Secuencia para número de donación -->
+    <record id="seq_crai_donation" model="ir.sequence">
+        <field name="name">Donación CRAI</field>
+        <field name="code">crai.donation</field>
+        <field name="prefix">UMET-CRAI-DON-</field>
+        <field name="padding">5</field>
+        <field name="number_increment">1</field>
+        <field name="implementation">standard</field>
+    </record>
+    
+    <!-- Secuencia para número de certificado -->
+    <record id="seq_crai_donation_certificate" model="ir.sequence">
+        <field name="name">Certificado de Donación CRAI</field>
+        <field name="code">crai.donation.certificate</field>
+        <field name="prefix">UMET-CRAI-CERT-</field>
+        <field name="padding">6</field>
+        <field name="number_increment">1</field>
+        <field name="implementation">standard</field>
+    </record>
+</odoo>

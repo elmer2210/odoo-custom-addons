@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Bibliotecarios: solo ven donaciones de sus campus -->
+    <record id="crai_donation_rule_librarian_by_campus" model="ir.rule">
+        <field name="name">Donations - Librarian Campus Visibility</field>
+        <field name="model_id" ref="model_crai_donation"/>
+        <field name="groups" eval="[(4, ref('crai_base.group_crai_librarian'))]"/>
+        <field name="domain_force">[('campus_id', 'in', user.crai_campus_ids.ids)]</field>
+    </record>
+    
+    <!-- Aprobadores: ven todas las donaciones -->
+    <record id="crai_donation_rule_approver_all" model="ir.rule">
+        <field name="name">Donations - Approver See All</field>
+        <field name="model_id" ref="model_crai_donation"/>
+        <field name="groups" eval="[(4, ref('crai_base.group_crai_donation_approver'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

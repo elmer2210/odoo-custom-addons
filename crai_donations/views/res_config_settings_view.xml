@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_res_config_settings_crai_donations" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.crai.donations</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='crai_students_settings']" position='after'>
+                <div class="app_settings_block" 
+                     string="Donaciones de Libros" 
+                     name="crai_donations_block"
+                     id="crai_donations_settings">
+                    <block title="Configuración de Donaciones" name="donations_setting_container">
+                        <setting id="donation_email_notifications_setting">
+                            <field name="donation_enable_email_notifications"/>
+                            <label for="donation_enable_email_notifications"/>
+                            <div class="text-muted">
+                                Envía correos automáticos a donantes y aprobadores cuando cambia el estado de una solicitud.
+                            </div>
+                        </setting>
+                        
+                        <setting id="donation_approver_email_setting">
+                            <field name="donation_approver_email" 
+                                   placeholder="aprobador@universidad.edu.ec"/>
+                            <label for="donation_approver_email"/>
+                            <div class="text-muted">
+                                Email adicional para notificar nuevas solicitudes (opcional).
+                            </div>
+                        </setting>
+                        
+                        <setting id="donation_certificate_validity_setting">
+                            <field name="donation_certificate_validity_days"/>
+                            <label for="donation_certificate_validity_days"/>
+                            <div class="text-muted">
+                                Días de validez del certificado (0 = sin vencimiento).
+                            </div>
+                        </setting>
+                    </block>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

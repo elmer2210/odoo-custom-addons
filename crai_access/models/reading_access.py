@@ -112,8 +112,25 @@ class ReadingAccess(models.Model):
         if not number_id:
             return {"ok": False, "message": _("Empty document number."), "record_id": False}
 
+        # ✅ NUEVO: Limpiar código - extraer solo números
+        import re
+        clean_number = re.sub(r'\D', '', number_id)
+        
+        if not clean_number:
+            return {"ok": False, "message": _("Código inválido."), "record_id": False}
+        
+        # ✅ Opcional: Validar longitud mínima
+        if len(clean_number) < 10:
+            return {"ok": False, "message": _("Número de cédula inválido."), "record_id": False}
+        
+        # ✅ Opcional: Tomar solo primeros 10 dígitos
+        if len(clean_number) > 10:
+            clean_number = clean_number[:10]
+
         Student = self.env["crai.student"].sudo()
-        student = Student.find_by_document(number_id)
+        # ✅ CAMBIO: Buscar con número limpio
+        student = Student.find_by_document(clean_number)
+        
         if not student:
             return {"ok": False, "message": _("El estudiante no existe."), "record_id": False}
 
@@ -124,7 +141,7 @@ class ReadingAccess(models.Model):
 
         # Librarian solo en sus sedes
         if self.env.user.has_group("crai_base.group_crai_librarian") and \
-           not self.env.user.has_group("crai_base.group_crai_admin"):
+        not self.env.user.has_group("crai_base.group_crai_admin"):
             if campus_id not in self.env.user.sudo().crai_campus_ids.ids:
                 return {"ok": False, "message": _("You are not allowed to operate this campus."), "record_id": False}
 

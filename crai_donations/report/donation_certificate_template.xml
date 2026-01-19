@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_donation_certificate_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <!-- Encabezado del certificado -->
+                        <div class="text-center" style="margin-top: 30px; margin-bottom: 40px;">
+                            <h1 style="font-size: 36px; color: #7d858c; font-weight: bold; margin-bottom: 10px;">
+                                CERTIFICADO DE DONACIÓN
+                            </h1>
+                            <h3 style="font-size: 18px; color: #666; margin-top: 0;">
+                                Centro de Recursos para el Aprendizaje y la Investigación (CRAI)
+                            </h3>
+                        </div>
+                        
+                        <!-- Número de certificado y código -->
+                        <div style="text-align: center; margin-bottom: 30px; padding: 15px; background-color: #f8f9fa; border-left: 5px solid #c9d51b;">
+                            <div style="font-size: 14px; color: #666;">Número de Certificado</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #7d858c; margin: 5px 0;">
+                                <t t-esc="o.certificate_number"/>
+                            </div>
+                            <div style="font-size: 11px; color: #999; margin-top: 10px;">
+                                Código de Verificación: 
+                                <span style="font-family: monospace; background-color: #e9ecef; padding: 3px 8px; border-radius: 3px;">
+                                    <t t-esc="o.certificate_code"/>
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <!-- Cuerpo del certificado -->
+                        <div style="text-align: justify; line-height: 1.8; font-size: 12px; margin: 30px 0;">
+                            <p style="margin-bottom: 20px;">
+                                La Universidad, a través del Centro de Recursos para el Aprendizaje y la Investigación (CRAI), 
+                                <strong>CERTIFICA QUE:</strong>
+                            </p>
+                            
+                            <!-- Información del donante -->
+                            <div style="background-color: #f8f9fa; padding: 20px; margin: 20px 0; border-radius: 5px;">
+                                <t t-if="o.donation_type in ('individual', 'group')">
+                                    <p style="margin: 5px 0;">
+                                        <strong>ESTUDIANTE:</strong> 
+                                        <span style="text-transform: uppercase;"><t t-esc="o.student_id.name"/></span>
+                                    </p>
+                                    <p style="margin: 5px 0;">
+                                        <strong>CÉDULA:</strong> <t t-esc="o.student_id.number_id"/>
+                                    </p>
+                                    <t t-if="o.student_career_id">
+                                        <p style="margin: 5px 0;">
+                                            <strong>CARRERA:</strong> <t t-esc="o.student_career_id.name"/>
+                                        </p>
+                                    </t>
+                                    
+                                    <!-- Estudiantes adicionales en donación grupal -->
+                                    <t t-if="o.donation_type == 'group' and o.group_student_ids">
+                                        <p style="margin: 15px 0 5px 0; font-weight: bold;">En conjunto con:</p>
+                                        <ul style="margin: 5px 0; padding-left: 20px;">
+                                            <t t-foreach="o.group_student_ids" t-as="student">
+                                                <li>
+                                                    <t t-esc="student.name"/> - CI: <t t-esc="student.number_id"/>
+                                                </li>
+                                            </t>
+                                        </ul>
+                                    </t>
+                                </t>
+                                
+                                <t t-else="">
+                                    <p style="margin: 5px 0;">
+                                        <strong>DONANTE:</strong> 
+                                        <span style="text-transform: uppercase;"><t t-esc="o.external_donor_name"/></span>
+                                    </p>
+                                    <t t-if="o.external_donor_organization">
+                                        <p style="margin: 5px 0;">
+                                            <strong>ORGANIZACIÓN:</strong> <t t-esc="o.external_donor_organization"/>
+                                        </p>
+                                    </t>
+                                </t>
+                            </div>
+                            
+                            <p style="margin: 20px 0;">
+                                Ha realizado una generosa donación de material bibliográfico al CRAI 
+                                de la <strong><t t-esc="o.campus_id.name"/></strong>, consistente en:
+                            </p>
+                            
+                            <!-- Tabla de libros donados -->
+                            <table class="table table-sm table-bordered" style="margin: 20px 0; font-size: 10px;">
+                                <thead style="background-color: #7d858c; color: white;">
+                                    <tr>
+                                        <th style="padding: 8px; text-align: center; width: 5%;">#</th>
+                                        <th style="padding: 8px; width: 35%;">Título</th>
+                                        <th style="padding: 8px; width: 25%;">Autor</th>
+                                        <th style="padding: 8px; width: 15%;">ISBN</th>
+                                        <th style="padding: 8px; text-align: center; width: 10%;">Cantidad</th>
+                                        <th style="padding: 8px; width: 10%;">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-set="index" t-value="0"/>
+                                    <t t-foreach="o.book_ids" t-as="book">
+                                        <t t-set="index" t-value="index + 1"/>
+                                        <tr>
+                                            <td style="padding: 6px; text-align: center;"><t t-esc="index"/></td>
+                                            <td style="padding: 6px;"><t t-esc="book.title"/></td>
+                                            <td style="padding: 6px;"><t t-esc="book.author"/></td>
+                                            <td style="padding: 6px;"><t t-esc="book.isbn or '-'"/></td>
+                                            <td style="padding: 6px; text-align: center;"><t t-esc="book.quantity"/></td>
+                                            <td style="padding: 6px;">
+                                                <t t-esc="dict(book._fields['condition'].selection).get(book.condition)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                                <tfoot style="background-color: #f8f9fa; font-weight: bold;">
+                                    <tr>
+                                        <td colspan="4" style="padding: 8px; text-align: right;">TOTAL DE LIBROS:</td>
+                                        <td style="padding: 8px; text-align: center;"><t t-esc="o.book_count"/></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                            
+                            <p style="margin: 20px 0;">
+                                Esta donación contribuye significativamente al enriquecimiento de nuestra colección 
+                                bibliográfica y apoya los procesos de enseñanza-aprendizaje de nuestra comunidad universitaria.
+                            </p>
+                            
+                            <p style="margin: 20px 0;">
+                                Se extiende el presente certificado a solicitud de la parte interesada, 
+                                en la ciudad de <strong>[Ciudad]</strong>, a los 
+                                <strong>
+                                    <t t-esc="o.certificate_issued_date.day"/> días del mes de 
+                                    <t t-esc="format_date(o.certificate_issued_date, date_format='MMMM', locale='es_EC')"/> 
+                                    de <t t-esc="o.certificate_issued_date.year"/>
+                                </strong>.
+                            </p>
+                        </div>
+                        
+                        <!-- Firmas -->
+                        <div style="margin-top: 60px;">
+                            <table style="width: 100%;">
+                                <tr>
+                                    <td style="width: 50%; text-align: center; vertical-align: bottom;">
+                                        <div style="border-top: 1px solid #333; padding-top: 5px; margin: 0 30px; font-size: 11px;">
+                                            <strong><t t-esc="o.approver_id.name or '[Nombre del Aprobador]'"/></strong><br/>
+                                            <span style="font-size: 10px;">Responsable de Donaciones CRAI</span>
+                                        </div>
+                                    </td>
+                                    <td style="width: 50%; text-align: center; vertical-align: bottom;">
+                                        <div style="border-top: 1px solid #333; padding-top: 5px; margin: 0 30px; font-size: 11px;">
+                                            <strong>[Nombre del Director]</strong><br/>
+                                            <span style="font-size: 10px;">Director(a) del CRAI</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <!-- Pie de página con información de verificación -->
+                        <div style="margin-top: 50px; padding: 15px; background-color: #f8f9fa; border-radius: 5px; font-size: 9px; color: #666;">
+                            <p style="margin: 0; text-align: center;">
+                                <strong>Este certificado puede ser verificado en línea ingresando el código de verificación en nuestro portal web.</strong>
+                            </p>
+                            <p style="margin: 5px 0 0 0; text-align: center;">
+                                Fecha de emisión: 
+                                <t t-esc="format_datetime(o.certificate_issued_date, tz='America/Guayaquil', dt_format='dd/MM/yyyy HH:mm')"/>
+                            </p>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

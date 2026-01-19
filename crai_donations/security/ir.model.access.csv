@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_crai_donation_admin,crai.donation admin,model_crai_donation,crai_base.group_crai_admin,1,1,1,1
+access_crai_donation_librarian,crai.donation librarian,model_crai_donation,crai_base.group_crai_librarian,1,1,1,1
+access_crai_donation_approver,crai.donation approver,model_crai_donation,crai_base.group_crai_donation_approver,1,1,0,0
+access_crai_donation_book_admin,crai.donation.book admin,model_crai_donation_book,crai_base.group_crai_admin,1,1,1,1
+access_crai_donation_book_librarian,crai.donation.book librarian,model_crai_donation_book,crai_base.group_crai_librarian,1,1,1,1
+access_crai_donation_book_approver,crai.donation.book approver,model_crai_donation_book,crai_base.group_crai_donation_approver,1,0,0,0
+access_crai_donation_reject_wizard,crai.donation.reject.wizard,model_crai_donation_reject_wizard,,1,1,1,1

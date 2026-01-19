@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_donation_certificate" model="ir.actions.report">
+        <field name="name">Certificado de Donación</field>
+        <field name="model">crai.donation</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">crai_donations.report_donation_certificate_document</field>
+        <field name="report_file">crai_donations.report_donation_certificate_document</field>
+        <field name="binding_model_id" ref="model_crai_donation"/>
+        <field name="binding_type">report</field>
+        <field name="print_report_name">'Certificado_%s' % (object.certificate_number or object.name)</field>
+    </record>
+</odoo>
