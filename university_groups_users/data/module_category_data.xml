@@ -1,7 +1,0 @@
-<odoo>
-    <!-- Categoría para Biblioteca -->
-    <record id="module_category_library" model="ir.module.category">
-        <field name="name">Biblioteca</field>
-        <field name="sequence">20</field>
-    </record>
-</odoo>

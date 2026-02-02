@@ -9,7 +9,7 @@
     "depends": ["crai_base", "crai_students"],
     "data": [
         "security/ir.model.access.csv",
-        "security/rules.xml",
+        #"security/rules.xml",
         "views/menu.xml",
         "views/reading_access_views.xml",
         "views/res_config_settings_view.xml",

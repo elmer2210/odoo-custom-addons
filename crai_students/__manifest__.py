@@ -7,11 +7,11 @@
     "depends": ["crai_base"],
     "data": [
         "security/ir.model.access.csv",
-        "security/rules.xml",
+        #"security/rules.xml",
         "views/student_views.xml",
         "views/menu.xml",
         "views/res_config_settings_view.xml",  # <-- nuevo
-        "data/cron.xml",  
+        "data/cron.xml",
     ],
     "installable": True,
     "application": False,

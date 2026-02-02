@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_library_computer_admin,library.computer.admin,model_library_computer,university_groups_users.group_university_admin,1,1,1,1
-access_library_cubicle_admin,library.cubicle.admin,model_library_cubicle,university_groups_users.group_university_admin,1,1,1,1
-access_library_entry_admin,library.entry.admin,model_library_entry,university_groups_users.group_university_admin,1,1,1,1
-access_library_loan_admin,library.loan.admin,model_library_loan,university_groups_users.group_university_admin,1,1,1,1

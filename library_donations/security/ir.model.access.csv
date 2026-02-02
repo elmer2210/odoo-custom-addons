@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_library_donation_admin,library.donation.admin,model_library_donation,university_groups_users.group_university_admin,1,1,1,1
-access_library_donation_item_admin,library.donation.items.admin,model_library_donation_item,university_groups_users.group_university_admin,1,1,1,1
