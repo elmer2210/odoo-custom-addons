@@ -37,13 +37,23 @@
     </field>
   </record>
 
-  <record id="action_crai_computer" model="ir.actions.act_window">
-    <field name="name">Computadoras</field>
-    <field name="res_model">crai.computer</field>
-    <field name="view_mode">tree,form</field>
+  <record id="view_crai_computer_search" model="ir.ui.view">
+    <field name="name">crai.computer.search</field>
+    <field name="model">crai.computer</field>
+    <field name="arch" type="xml">
+      <search string="Buscar Equipos">
+        <field name="name"/>
+        <field name="code"/>
+        <field name="campus_id"/>
+
+        <filter name="my_campuses" string="Mis Campus" domain="[('campus_id.user_ids', '=', uid)]"/>
+
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_campus" string="Campus" context="{'group_by': 'campus_id'}"/>
+          <filter name="group_by_active" string="Estado Activo" context="{'group_by': 'is_active'}"/>
+        </group>
+      </search>
+    </field>
   </record>
 
-  <menuitem id="menu_crai_computers_root" name="Computadoras" sequence="30"/>
-  <menuitem id="menu_crai_computers" name="Equipos"
-            parent="menu_crai_computers_root" action="action_crai_computer"/>
 </odoo>

@@ -24,8 +24,16 @@ class CraiComputerSession(models.Model):
     student_name = fields.Char(related="student_id.name", store=True)
     computer_name = fields.Char(related="computer_id.name", store=True, index=True)
 
+    computer_campus_id = fields.Many2one(
+        "crai.campus", 
+        string="Campus del Equipo", 
+        related="computer_id.campus_id", 
+        store=True, 
+        index=True
+    )
+
     site_id = fields.Many2one("crai.site", string="Sede", index=True)
-    campus_id = fields.Many2one("crai.campus", string="Campus", index=True)
+    campus_id = fields.Many2one("crai.campus", string="Campus Estudiante", index=True)
 
     start_at = fields.Datetime(default=fields.Datetime.now, required=True, index=True, tracking=True)
     end_at = fields.Datetime(index=True, tracking=True)

@@ -2,7 +2,7 @@
 <odoo>
     <!-- Menú principal -->
     <menuitem id="menu_crai_donations_root" 
-              name="Donaciones CRAI"  
+              name="Donaciones"  
               sequence="20"/>
 
     <!-- Acción principal de donaciones -->
@@ -80,4 +80,19 @@
               parent="menu_crai_donations_root"
               action="action_crai_donation_dashboard" 
               sequence="90"/>
+
+    <!-- Acción: Reportes de libros donados -->
+    <record id="action_crai_donation_book_report" model="ir.actions.act_window">
+        <field name="name">Reporte de Libros Donados</field>
+        <field name="res_model">crai.donation.book</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'search_default_approved_donations': 1, 'search_default_group_by_campus': 1}</field>
+    </record>
+
+    <menuitem id="menu_crai_donation_book_report"
+              name="Reporte de Libros"
+              action="action_crai_donation_book_report"
+              parent="menu_crai_donations_root"
+              groups="crai_base.group_crai_donation_approver"
+              sequence="20"/>
 </odoo>

@@ -7,7 +7,7 @@
         <field name="name">Registros de Acceso</field>
         <field name="res_model">crai.reading.access</field>
         <field name="view_mode">tree,form,graph,pivot</field>
-        <field name="domain">[('campus_id.user_id','=', uid)]</field>
+        <field name="domain">[('campus_id.user_ids','=', uid)]</field>
         <field name="context">
             {
                 "search_default_my_campuses": 1,
@@ -23,7 +23,7 @@
         <field name="name">Dashboard</field>
         <field name="res_model">crai.reading.access</field>
         <field name="view_mode">graph,pivot,tree</field>
-        <field name="domain">[('campus_id.user_id','=', uid)]</field>
+        <field name="domain">[('campus_id.user_ids','=', uid)]</field>
         <field name="context">
             {
                 "search_default_my_campuses": 1,

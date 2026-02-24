@@ -97,6 +97,28 @@ class CraiDonationBook(models.Model):
         readonly=True
     )
     
+    campus_id = fields.Many2one(
+        "crai.campus",
+        string="Campus (Sede)",
+        related="donation_id.campus_id",
+        store=True,
+        readonly=True
+    )
+    
+    approval_date = fields.Datetime(
+        string="Fecha de Aprobación",
+        related="donation_id.approval_date",
+        store=True,
+        readonly=True
+    )
+    
+    state = fields.Selection(
+        related="donation_id.state",
+        string="Estado de Donación",
+        store=True,
+        readonly=True
+    )
+
     # ===============================
     # COMPUTED FIELDS
     # ===============================

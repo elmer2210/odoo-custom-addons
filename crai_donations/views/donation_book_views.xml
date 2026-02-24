@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_crai_donation_book_tree" model="ir.ui.view">
+        <field name="name">crai.donation.book.tree</field>
+        <field name="model">crai.donation.book</field>
+        <field name="arch" type="xml">
+            <tree string="Reporte de Libros Donados" create="false" edit="false" delete="false" default_order="approval_date desc">
+                <field name="campus_id" optional="show"/>
+                <field name="approval_date" widget="date" optional="show"/>
+                <field name="donation_id" string="Solicitud" optional="show"/>
+                <field name="title"/>
+                <field name="author"/>
+		<field name="publication_year"/>
+                <field name="isbn" optional="show"/>
+		<field name="publisher" optional="show"/>
+                <field name="quantity" sum="Total Libros" optional="show"/>
+                <field name="cost" widget="monetary" optional="hide"/>
+                <field name="total_cost" widget="monetary" sum="Costo Total" optional="show"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state in ('approved', 'certificate_issued')" 
+                       decoration-info="state == 'submitted'"
+                       optional="show"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_crai_donation_book_search" model="ir.ui.view">
+        <field name="name">crai.donation.book.search</field>
+        <field name="model">crai.donation.book</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Libros">
+                <field name="title"/>
+                <field name="author"/>
+                <field name="isbn"/>
+                <field name="campus_id"/>
+                
+                <filter string="Donaciones Aprobadas" name="approved_donations" domain="[('state', 'in', ('approved', 'certificate_issued'))]"/>
+                <separator/>
+                
+                <filter string="Aprobados este Mes" name="current_month" domain="[('approval_date', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Por Sede (Campus)" name="group_by_campus" context="{'group_by': 'campus_id'}"/>
+                    <filter string="Por Mes de Aprobación" name="group_by_month" context="{'group_by': 'approval_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>              
+</odoo>

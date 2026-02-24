@@ -1,6 +1,6 @@
 <odoo>
   <!-- Menú raíz CRAI -->
-  <menuitem id="menu_crai_root" name="CRAI Monitoreo" web_icon="crai_base,static/description/icon.png" sequence="10"/>
+  <menuitem id="menu_crai_root" name="Monitoreo" web_icon="crai_base,static/description/icon.png" sequence="10"/>
 
   <!-- Menú Configuración (solo Admin CRAI) -->
   <menuitem id="menu_crai_config" name="Configuración" parent="menu_crai_root"

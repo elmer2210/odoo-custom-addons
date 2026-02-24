@@ -158,10 +158,10 @@
                                     <field name="sequence" widget="handle"/>
                                     <field name="title"/>
                                     <field name="author"/>
-                                    <field name="isbn"/>
-                                    <field name="publisher" optional="hide"/>
-                                    <field name="publication_year" optional="hide"/>
-                                    <field name="edition" optional="hide"/>
+                                    <field name="publication_year"/>
+				    <field name="publisher" />
+                                    <field name="edition"/>
+				    <field name="isbn"/>
                                     <field name="quantity"/>
                                     <field name="cost" 
                                            required="donation_type in ('individual', 'group')"

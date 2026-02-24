@@ -57,16 +57,7 @@
                 <field name="student_career_id" string="Carrera"/>
                 <field name="campus_id"/>
                 <!--Filtros-->
-                <filter name="my_campuses" string="Mis sedes" domain="[('campus_id.user_id','=', uid)]"/>
-                <filter name="today" string="Hoy"
-                        domain="[('occurred_at','&gt;=', context_today().strftime('%Y-%m-%d 00:00:00')),
-                                 ('occurred_at','&lt;=', context_today().strftime('%Y-%m-%d 23:59:59'))]"/>
-                <filter name="this_week" string="Esta semana"
-                        domain="[('occurred_at','&gt;=', (context_today() - relativedelta(days=(context_today().weekday()))).strftime('%Y-%m-%d 00:00:00')),
-                                 ('occurred_at','&lt;=', (context_today() + relativedelta(days=(6-context_today().weekday()))).strftime('%Y-%m-%d 23:59:59'))]"/>
-                <filter name="this_month" string="Este mes"
-                        domain="[('occurred_at','&gt;=', context_today().replace(day=1).strftime('%Y-%m-%d 00:00:00')),
-                                 ('occurred_at','&lt;=', (context_today().replace(day=1)+relativedelta(months=1,days=-1)).strftime('%Y-%m-%d 23:59:59'))]"/>
+                <filter name="my_campuses" string="Mis sedes" domain="[('campus_id.user_ids','=', uid)]"/>
                 <filter name="filter_date_access" string="Fecha Ingreso" date="occurred_at" default_period="today, this_week, this_month"/>
                 <!--Agrupar-->
                 <group expand="0" string="Agrupar por">

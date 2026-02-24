@@ -9,6 +9,7 @@
     "data": [
         "security/security.xml",
         "security/ir.model.access.csv",
+        "views/menu.xml",
         "views/computer_views.xml",
         "views/computer_session_views.xml",
         "data/ir_cron.xml",

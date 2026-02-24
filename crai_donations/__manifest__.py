@@ -14,6 +14,7 @@
         "data/mail_template.xml",
         "views/menu.xml",
         "views/donation_views.xml",
+        "views/donation_book_views.xml",
         "views/res_config_settings_view.xml",
         "report/donation_certificate_report.xml",
         "report/donation_certificate_template.xml",

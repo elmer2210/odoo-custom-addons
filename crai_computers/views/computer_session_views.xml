@@ -45,12 +45,50 @@
     </field>
   </record>
 
-  <record id="action_crai_computer_session" model="ir.actions.act_window">
-    <field name="name">Sesiones</field>
-    <field name="res_model">crai.computer.session</field>
-    <field name="view_mode">tree,form</field>
-  </record>
+  <record id="view_crai_computer_session_search" model="ir.ui.view">
+    <field name="name">crai.computer.session.search</field>
+    <field name="model">crai.computer.session</field>
+    <field name="arch" type="xml">
+      <search string="Buscar Sesiones">
+        <field name="student_id"/>
+        <field name="computer_id"/>
+        <field name="campus_id"/>
 
-  <menuitem id="menu_crai_computer_sessions" name="Sesiones"
-            parent="menu_crai_computers_root" action="action_crai_computer_session"/>
+        <filter name="my_campuses" string="Mis Campus" domain="[('campus_id.user_ids', '=', uid)]"/>
+        <filter name="open_sessions" string="Sesiones Abiertas" domain="[('state', '=', 'open')]"/>
+        <filter name="filter_date_start" string="Fecha de Sesión" date="start_at" default_period="today, this_week, this_month"/>
+
+        <group expand="0" string="Agrupar por">
+          <filter name="group_by_campus" string="Campus" context="{'group_by': 'computer_campus_id'}"/>
+          <filter name="group_by_state" string="Estado de la Sesión" context="{'group_by': 'state'}"/>
+          <filter name="group_by_day" string="Día" context="{'group_by': 'start_at:day'}"/>
+          <filter name="group_by_month" string="Mes" context="{'group_by': 'start_at:month'}"/>
+        </group>
+      </search>
+    </field>
+  </record>
+  <record id="view_crai_computer_session_graph" model="ir.ui.view">
+        <field name="name">crai.computer.session.graph</field>
+        <field name="model">crai.computer.session</field>
+        <field name="arch" type="xml">
+            <graph string="Análisis de Sesiones" type="bar" stacked="True">
+                <field name="start_at" interval="day"/>
+                <field name="computer_campus_id"/>
+                <field name="duration_minutes" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_crai_computer_session_pivot" model="ir.ui.view">
+        <field name="name">crai.computer.session.pivot</field>
+        <field name="model">crai.computer.session</field>
+        <field name="arch" type="xml">
+            <pivot string="Tabla Dinámica de Uso">
+                <field name="computer_campus_id" type="row"/>
+                <field name="start_at" interval="month" type="col"/>
+                <field name="duration_minutes" type="measure"/>
+            </pivot>
+        </field>
+    </record> 
+
 </odoo>
