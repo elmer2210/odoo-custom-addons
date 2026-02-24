@@ -108,6 +108,114 @@
             </field>
             <field name="auto_delete" eval="True"/>
         </record>
-        
+        <record id="email_template_donation_submitted" model="mail.template">
+            <field name="name">CRAI: Solicitud de Donación por Aprobar</field>
+            <field name="model_id" ref="crai_donations.model_crai_donation"/>
+            <field name="subject">Requiere Aprobación: Solicitud de Donación {{ object.name }}</field>
+            <field name="email_from">{{ object.env.company.email_formatted or 'notificaciones.crai@umet.edu.ec' }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; background-color: #F4F5F7; font-family: 'Segoe UI', Arial, sans-serif;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; background-color: #F4F5F7;">
+                        <tbody>
+                            <tr>
+                                <td align="center" style="padding: 30px 10px;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                                        <tr>
+                                            <td align="center" style="background-color: #005b96; padding: 30px 20px;">
+                                                <h1 style="color: #FFFFFF; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 1px;">
+                                                    Nueva Solicitud para Aprobación
+                                                </h1>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 40px 30px; color: #333333; font-size: 15px; line-height: 1.6;">
+                                                <p style="margin-top: 0; font-size: 16px;">
+                                                    Estimado/a <strong style="color: #005b96;"><t t-out="ctx.get('approver_name', 'Aprobador')"/></strong>,
+                                                </p>
+                                                <p>El bibliotecario <strong><t t-out="object.librarian_id.name or 'Usuario'"/></strong> ha enviado una nueva solicitud de donación que requiere su revisión y aprobación.</p>
+                                                
+                                                <table border="0" cellpadding="10" cellspacing="0" width="100%" style="margin: 20px 0; border: 1px solid #E1E1E1; border-radius: 5px;">
+                                                    <tr style="background-color: #F8F9FA;">
+                                                        <td style="width: 40%; border-bottom: 1px solid #E1E1E1; color: #555;"><strong>Nº Solicitud:</strong></td>
+                                                        <td style="width: 60%; border-bottom: 1px solid #E1E1E1; color: #005b96; font-weight: bold;"><t t-out="object.name"/></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-bottom: 1px solid #E1E1E1; color: #555;"><strong>Campus:</strong></td>
+                                                        <td style="border-bottom: 1px solid #E1E1E1; color: #333;"><t t-out="object.campus_id.name"/></td>
+                                                    </tr>
+                                                    <tr style="background-color: #F8F9FA;">
+                                                        <td style="color: #555;"><strong>Libros a Donar:</strong></td>
+                                                        <td style="color: #333;"><t t-out="object.book_count"/> libro(s)</td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                <div style="text-align: center; margin-top: 30px;">
+                                                    <a t-attf-href="/web#id={{ object.id }}&amp;model=crai.donation&amp;view_type=form" style="background-color: #005b96; color: #FFFFFF; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                                                        Revisar Solicitud en Odoo
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+
+        <record id="email_template_donation_rejected" model="mail.template">
+            <field name="name">CRAI: Solicitud de Donación Rechazada</field>
+            <field name="model_id" ref="crai_donations.model_crai_donation"/>
+            <field name="subject">Solicitud Rechazada: {{ object.name }}</field>
+            <field name="email_from">{{ object.env.company.email_formatted or 'notificaciones.crai@umet.edu.ec' }}</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; background-color: #F4F5F7; font-family: 'Segoe UI', Arial, sans-serif;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; background-color: #F4F5F7;">
+                        <tbody>
+                            <tr>
+                                <td align="center" style="padding: 30px 10px;">
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                                        <tr>
+                                            <td align="center" style="background-color: #d9534f; padding: 30px 20px;">
+                                                <h1 style="color: #FFFFFF; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 1px;">
+                                                    Solicitud de Donación Rechazada
+                                                </h1>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding: 40px 30px; color: #333333; font-size: 15px; line-height: 1.6;">
+                                                <p style="margin-top: 0; font-size: 16px;">
+                                                    Estimado/a <strong style="color: #d9534f;"><t t-out="object.librarian_id.name or 'Bibliotecario'"/></strong>,
+                                                </p>
+                                                <p>Le notificamos que la solicitud de donación <strong><t t-out="object.name"/></strong> ha sido rechazada por <strong><t t-out="object.approver_id.name"/></strong>.</p>
+                                                
+                                                <div style="background-color: #fdf2f2; border-left: 4px solid #d9534f; padding: 15px; margin: 20px 0; border-radius: 0 4px 4px 0;">
+                                                    <p style="margin: 0 0 5px 0; color: #a94442;"><strong>Motivo del Rechazo:</strong></p>
+                                                    <p style="margin: 0; color: #333; font-style: italic;">
+                                                        "<t t-out="object.rejection_reason or 'No se especificó motivo.'"/>"
+                                                    </p>
+                                                </div>
+                                                
+                                                <p>Por favor, ingrese al sistema, realice las correcciones indicadas en la observación y vuelva a enviar la solicitud a borrador para intentar nuevamente.</p>
+                                                
+                                                <div style="text-align: center; margin-top: 30px;">
+                                                    <a t-attf-href="/web#id={{ object.id }}&amp;model=crai.donation&amp;view_type=form" style="background-color: #d9534f; color: #FFFFFF; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;">
+                                                        Corregir Solicitud en Odoo
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </field>
+            <field name="auto_delete" eval="True"/>
+        </record>
     </data>
 </odoo>

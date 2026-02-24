@@ -2,9 +2,8 @@
 <odoo>
     <!-- Menú principal -->
     <menuitem id="menu_crai_donations_root" 
-              name="Donaciones" 
-              parent="crai_base.menu_crai_root" 
-              sequence="30"/>
+              name="Donaciones CRAI"  
+              sequence="20"/>
 
     <!-- Acción principal de donaciones -->
     <record id="action_crai_donation" model="ir.actions.act_window">

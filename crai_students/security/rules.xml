@@ -1,10 +1,16 @@
 <odoo>
-  <!-- Los bibliotecarios ven solo estudiantes de sus sedes -->
   <record id="rule_crai_student_by_campus" model="ir.rule">
     <field name="name">CRAI Students by User Campuses</field>
     <field name="model_id" ref="model_crai_student"/>
     <field name="domain_force">[('campus_id','in', user.crai_campus_ids.ids)]</field>
     <field name="groups" eval="[(4, ref('crai_base.group_crai_librarian'))]"/>
   </record>
-  <!-- Admin ve todo (sin regla adicional) -->
+  
+  <record id="rule_crai_student_approver_all" model="ir.rule">
+    <field name="name">CRAI Students - Approver See All</field>
+    <field name="model_id" ref="model_crai_student"/>
+    <field name="groups" eval="[(4, ref('crai_base.group_crai_donation_approver'))]"/>
+    <field name="domain_force">[(1, '=', 1)]</field>
+  </record>
+
 </odoo>
