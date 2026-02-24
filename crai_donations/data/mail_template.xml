@@ -1,97 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
-        <!-- TODAS las plantillas van dentro de un solo bloque <data> -->
         
         <record id="email_template_certificate_issued" model="mail.template">
             <field name="name">CRAI: Certificado de Donación</field>
-            <field name="model_id" ref="model_crai_donation"/>
-            <field name="subject">Su Certificado de Donación - {{object.certificate_number}}</field>
-            <field name="email_from">notificaciones.crai@umet.edu.ec</field>
-            <field name="email_to">{{object.student_id.email if object.donation_type in ['individual', 'group'] else object.external_donor_email}}</field>
+            <field name="model_id" ref="crai_donations.model_crai_donation"/>
+            <field name="subject">Su Certificado de Donación - {{ object.certificate_number }}</field>
+            
+            <field name="email_from">{{ object.approver_id.email_formatted or object.env.company.email_formatted }}</field>
+            
+            <field name="email_to">{{ (','.join([e for e in [object.student_id.email] + object.group_student_ids.mapped('email') if e])) if object.donation_type == 'group' else (object.student_id.email if object.donation_type == 'individual' else object.external_donor_email) }}</field>
+            
+            <field name="report_template_ids" eval="[(4, ref('crai_donations.action_report_donation_certificate'))]"/>
+            
             <field name="body_html" type="html">
-                <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-                    <div style="background-color: #c9d51b; color: #333; padding: 20px; text-align: center;">
-                        <h2>¡Su Certificado de Donación está Listo!</h2>
-                    </div>
-                    
-                    <div style="padding: 20px; background-color: #f9f9f9;">
-                        <p>
-                            <t t-if="object.donation_type in ['individual', 'group']">
-                                Estimado/a <strong><t t-out="object.student_id.name or ''">Estudiante</t></strong>,
-                            </t>
-                            <t t-else="">
-                                Estimado/a <strong><t t-out="object.external_donor_name or ''">Donante</t></strong>,
-                            </t>
-                        </p>
-                        
-                        <p>Nos complace hacerle llegar su <strong>Certificado Oficial de Donación</strong>.</p>
-                        
-                        <table style="width: 100%; margin: 20px 0; border-collapse: collapse;">
-                            <tr style="background-color: #e8e8e8;">
-                                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Número de Certificado:</strong></td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    <span style="font-size: 16px; font-weight: bold; color: #c9d51b;">
-                                        <t t-out="object.certificate_number or ''">CERT-001</t>
-                                    </span>
-                                </td>
-                            </tr>
+                <div style="margin: 0px; padding: 0px; background-color: #F4F5F7; font-family: 'Segoe UI', Arial, sans-serif;">
+                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="min-width: 100%; background-color: #F4F5F7;">
+                        <tbody>
                             <tr>
-                                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Código de Verificación:</strong></td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    <code style="background-color: #f4f4f4; padding: 5px; font-family: monospace;">
-                                        <t t-out="object.certificate_code or ''">XXXX-XXXX-XXXX-XXXX</t>
-                                    </code>
+                                <td align="center" style="padding: 30px 10px;">
+                                    
+                                    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #FFFFFF; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                                        
+                                        <tr>
+                                            <td align="center" style="background-color: #2c3e50; padding: 30px 20px;">
+                                                <h1 style="color: #FFFFFF; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: 1px;">
+                                                    ¡Su Certificado está listo!
+                                                </h1>
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td style="padding: 40px 30px; color: #333333; font-size: 15px; line-height: 1.6;">
+                                                <p style="margin-top: 0;">
+                                                    <t t-if="object.donation_type == 'group'">
+                                                        Estimados <strong style="color: #2c3e50;">Estudiantes</strong>,
+                                                    </t>
+                                                    <t t-elif="object.donation_type == 'individual'">
+                                                        Estimado/a <strong style="color: #2c3e50;"><t t-out="object.student_id.name or ''">Estudiante</t></strong>,
+                                                    </t>
+                                                    <t t-else="">
+                                                        Estimado/a <strong style="color: #2c3e50;"><t t-out="object.external_donor_name or ''">Donante</t></strong>,
+                                                    </t>
+                                                </p>
+                                                
+                                                <p>Perteneciente/s a la carrera <strong> <t t-out="object.student_career_id.name or ''">ENFERMERÍA</t> </strong>,Nos complace hacerle llegar su <strong>Certificado Oficial de Donación</strong>. 
+                                                   Adjunto a este correo encontrará el documento en formato PDF.</p>
+                                                
+                                                <table border="0" cellpadding="12" cellspacing="0" width="100%" style="margin: 30px 0; border: 1px solid #E1E1E1; border-radius: 5px;">
+                                                    <tr style="background-color: #F8F9FA;">
+                                                        <td style="width: 45%; border-bottom: 1px solid #E1E1E1; color: #555;"><strong>Nº de Certificado:</strong></td>
+                                                        <td style="width: 55%; border-bottom: 1px solid #E1E1E1; color: #2c3e50; font-weight: bold;">
+                                                            <t t-out="object.certificate_number or ''">CERT-000</t>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="border-bottom: 1px solid #E1E1E1; color: #555;"><strong>Fecha de Emisión:</strong></td>
+                                                        <td style="border-bottom: 1px solid #E1E1E1; color: #333;">
+                                                            <t t-out="format_date(object.certificate_issued_date) or ''">01/01/2026</t>
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="background-color: #F8F9FA;">
+                                                        <td style="border-bottom: 1px solid #E1E1E1; color: #555;"><strong>Libros Donados:</strong></td>
+                                                        <td style="border-bottom: 1px solid #E1E1E1; color: #333;">
+                                                            <t t-out="object.book_count or 0">0</t>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td style="color: #555;"><strong>Código de Verificación:</strong></td>
+                                                        <td style="color: #333;">
+                                                            <span style="background-color: #E9ECEF; padding: 4px 8px; border-radius: 4px; font-family: monospace; font-size: 13px; letter-spacing: 1px;">
+                                                                <t t-out="object.certificate_code or ''">XXXX-XXXX</t>
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                                
+                                                <p style="text-align: center; margin: 30px 0;">
+                                                    <strong style="color: #2c3e50; font-size: 16px;">Agradecemos profundamente su generosa contribución.</strong><br/>
+                                                    <span style="font-size: 14px; color: #666;">Su donación enriquecerá significativamente los recursos educativos de nuestra institución.</span>
+                                                </p>
+                                                
+                                                <div style="background-color: #f8f9fa; border-left: 4px solid #c9d51b; padding: 15px; border-radius: 0 4px 4px 0;">
+                                                    <p style="margin: 0 0 5px 0; font-size: 13px; color: #555;"><strong>Nota Importante:</strong></p>
+                                                    <p style="margin: 0; font-size: 13px; color: #666;">
+                                                        El documento adjunto posee total validez oficial. Cualquier entidad puede verificar su autenticidad utilizando el código alfanumérico.
+                                                    </p>
+                                                </div>
+                                                
+                                            </td>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td align="center" style="background-color: #F8F9FA; border-top: 1px solid #EAEAEA; padding: 20px; color: #888888; font-size: 12px;">
+                                                <p style="margin: 0;"><strong>Sistema Monitoreo CRAI</strong></p>
+                                                <p style="margin: 15px 0 0 0; font-style: italic;">Este es un mensaje automático. Por favor, no responda a este correo.</p>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                    
                                 </td>
                             </tr>
-                            <tr style="background-color: #e8e8e8;">
-                                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Fecha de Emisión:</strong></td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    <t t-out="object.certificate_issued_date or ''">01/01/2025</t>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Libros Donados:</strong></td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    <t t-out="object.book_count or 0">0</t>
-                                </td>
-                            </tr>
-                            <tr style="background-color: #e8e8e8;">
-                                <td style="padding: 10px; border: 1px solid #ddd;"><strong>Costo Total:</strong></td>
-                                <td style="padding: 10px; border: 1px solid #ddd;">
-                                    $ <t t-out="'%.2f' % (object.total_cost or 0.0)">0.00</t>
-                                </td>
-                            </tr>
-                        </table>
-                        
-                        <div style="background-color: #d1ecf1; border-left: 4px solid #0c5460; padding: 15px; margin: 20px 0;">
-                            <p style="margin: 0;"><strong>Importante:</strong></p>
-                            <ul style="margin: 10px 0 0 20px;">
-                                <li>Este certificado incluye un código de verificación único.</li>
-                                <li>El certificado adjunto está en formato PDF.</li>
-                                <li>Puede verificar la autenticidad del certificado usando el código de verificación.</li>
-                            </ul>
-                        </div>
-                        
-                        <p style="margin-top: 30px;">
-                            <strong>Agradecemos profundamente su generosa contribución a nuestra biblioteca.</strong>
-                        </p>
-                        
-                        <p>Su donación ayudará a enriquecer los recursos educativos de nuestra institución.</p>
-                        
-                        <p style="margin-top: 30px; font-size: 12px; color: #666;">
-                            Este es un correo automático. Por favor no responder directamente a este mensaje.
-                        </p>
-                    </div>
-                    
-                    <div style="background-color: #7d858c; color: white; padding: 10px; text-align: center; font-size: 12px;">
-                        <p>Sistema CRAI - Universidad Nacional de Chimborazo</p>
-                    </div>
+                        </tbody>
+                    </table>
                 </div>
             </field>
             <field name="auto_delete" eval="True"/>
         </record>
-        
         
     </data>
 </odoo>
