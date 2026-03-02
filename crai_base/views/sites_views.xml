@@ -1,17 +1,18 @@
 <odoo>
-  <record id="view_crai_campus_tree" model="ir.ui.view">
+  <record id="view_crai_sede_tree" model="ir.ui.view">
     <field name="name">crai.site.tree</field>
     <field name="model">crai.site</field>
     <field name="arch" type="xml">
       <tree>
         <field name="name"/>
         <field name="code"/>
+        <field name="secretary_email"/>
         <field name="active"/>
       </tree>
     </field>
   </record>
 
-  <record id="view_crai_campus_form" model="ir.ui.view">
+  <record id="view_crai_sede_form" model="ir.ui.view">
     <field name="name">crai.site.form</field>
     <field name="model">crai.site</field>
     <field name="arch" type="xml">
@@ -21,6 +22,9 @@
             <field name="name"/>
             <field name="code"/>
             <field name="active"/>
+          </group>
+          <group string="Notificaciones">
+            <field name="secretary_email" widget="email"/>
           </group>
         </sheet>
       </form>

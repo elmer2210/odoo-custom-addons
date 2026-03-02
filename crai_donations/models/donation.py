@@ -363,7 +363,6 @@ class CraiDonation(models.Model):
     def action_submit(self):
         """Envía la solicitud para aprobación"""
         self.ensure_one()
-        
         # Validaciones
         if not self.book_ids:
             raise UserError(_("Debe agregar al menos un libro antes de enviar."))
@@ -535,7 +534,7 @@ class CraiDonation(models.Model):
         if not template:
             return
         
-        recipient_email = self._get_donor_email()
+        recipient_email = self.get_donor_email()
         if recipient_email:
             template.send_mail(
                 self.id,
@@ -567,7 +566,7 @@ class CraiDonation(models.Model):
         if not template:
             return
         
-        recipient_email = self._get_donor_email()
+        recipient_email = self.get_donor_email()
         if recipient_email:
             template.send_mail(
                 self.id,
@@ -575,17 +574,30 @@ class CraiDonation(models.Model):
                 force_send=True
             )
     
-    def _get_donor_email(self):
-        """Obtiene email del donante según el tipo de donación"""
+    def get_donor_email(self):  # <-- Le quitamos el guion bajo inicial
+        """Obtiene email del donante, integrantes del grupo y secretaría de la sede"""
         self.ensure_one()
+        emails = []
         
+        # 1. Correos de los donantes/estudiantes
         if self.donation_type in ("individual", "group"):
-            return self.student_id.email if self.student_id else False
+            if self.student_id.email:
+                emails.append(self.student_id.email)
+            
+            # Si es grupal, incluimos a todos los integrantes
+            if self.donation_type == "group":
+                emails.extend(self.group_student_ids.mapped('email'))
+                
         elif self.donation_type == "external":
-            return self.external_donor_email
+            if self.external_donor_email:
+                emails.append(self.external_donor_email)
         
-        return False
-
+        # 2. Correo de secretaría configurado en la SEDE (Site)
+        if self.campus_id and self.campus_id.site_id and self.campus_id.site_id.secretary_email:
+            emails.append(self.campus_id.site_id.secretary_email)
+                
+        # Limpiamos valores vacíos y devolvemos la lista separada por comas
+        return ",".join(list(set(filter(None, emails))))
 
 # ===============================
 # WIZARD DE RECHAZO

@@ -111,12 +111,23 @@
                         </div>
                     </div>
 
-                    <div class="footer" style="font-family: Arial, sans-serif; font-size: 11px; text-align: center; border-top: 1px solid #ddd; padding-top: 15px; color: #444;">
-                        <p style="margin: 0;">Documento con validez oficial.</p>
-                        <p style="margin: 3px 0 0 0;">
-                            Para verificar su autenticidad ingrese el código: 
-                            <strong style="color: #000; letter-spacing: 1px; font-family: monospace; font-size: 12px;"><t t-esc="o.certificate_code"/></strong>
-                        </p>
+                    <div class="footer">
+                        <div class="row" style="border-top: 1px solid #dee2e6; padding-top: 15px; page-break-inside: avoid;">
+        
+                            <div class="col-9 text-left">
+                                  <p style="font-size: 11px; color: #555; margin-bottom: 5px;">
+                                        Puede verificar la autenticidad de este documento escaneando el código QR o ingresando al siguiente enlace:
+                                  </p>
+                                 <a t-attf-href="https://monitoreocrai.umet.edu.ec/web/crai/verificar?db={{ request.env.cr.dbname }}&amp;code={{ o.certificate_code }}" style="font-size: 11px; color: #2c3e50; text-decoration: none;">
+                                      <strong>https://monitoreocrai.umet.edu.ec/web/crai/verificar?db=<t t-esc="request.env.cr.dbname"/>&amp;code=<t t-esc="o.certificate_code"/></strong>
+                                 </a>
+                           </div>
+        
+                          <div class="col-3 text-right">
+                                <img t-attf-src="/report/barcode/?barcode_type=QR&amp;value=https://monitoreocrai.umet.edu.ec/web/crai/verificar%3Fdb%3D{{ request.env.cr.dbname }}%26code%3D{{ o.certificate_code }}&amp;width=80&amp;height=80" style="width: 80px; height: 80px; float: right;"/>
+                          </div>
+
+                      </div>
                     </div>
 
                 </t>

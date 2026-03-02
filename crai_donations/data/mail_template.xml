@@ -9,7 +9,7 @@
             
             <field name="email_from">{{ object.approver_id.email_formatted or object.env.company.email_formatted }}</field>
             
-            <field name="email_to">{{ (','.join([e for e in [object.student_id.email] + object.group_student_ids.mapped('email') if e])) if object.donation_type == 'group' else (object.student_id.email if object.donation_type == 'individual' else object.external_donor_email) }}</field>
+            <field name="email_to">{{ object.get_donor_email() }}</field>
             
             <field name="report_template_ids" eval="[(4, ref('crai_donations.action_report_donation_certificate'))]"/>
             

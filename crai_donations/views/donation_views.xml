@@ -113,6 +113,7 @@
                                     <field name="student_id" 
                                            required="donation_type in ('individual', 'group')"
                                            readonly="state != 'draft'"
+			        	   domain="[('campus_id', '=', campus_id)]"
                                            options="{'no_create': True}"/>
                                     <field name="student_career_id" readonly="1"/>
                                 </group>
@@ -124,9 +125,12 @@
                                 <field name="group_student_ids" 
                                        widget="many2many_tags"
                                        readonly="state != 'draft'"
-                                       domain="[('career_id', '=', student_career_id)]"
+                                       domain="[('campus_id', '=', campus_id), ('career_id', '=', student_career_id)]"
                                        options="{'no_create': True}"
-                                       nolabel="1"/>
+                                       nolabel="1"
+                                       colspan="2"
+                                       placeholder="Seleccione a los estudiantes del grupo..." 
+                                 />
                             </group>
                             
                             <!-- Para donantes externos -->
@@ -151,38 +155,41 @@
                         
                         <!-- LIBROS DONADOS -->
                         <page string="Libros Donados" name="books">
-                            <field name="book_ids" 
-                                   readonly="state not in ('draft', 'submitted')"
-                                   context="{'default_donation_type': donation_type}">
-                                <tree editable="bottom">
-                                    <field name="sequence" widget="handle"/>
-                                    <field name="title"/>
-                                    <field name="author"/>
-                                    <field name="publication_year"/>
-				    <field name="publisher" />
-                                    <field name="edition"/>
-				    <field name="isbn"/>
-                                    <field name="quantity"/>
-                                    <field name="cost" 
-                                           required="donation_type in ('individual', 'group')"
-                                           invisible="donation_type == 'external'"
-                                           widget="monetary"/>
-                                    <field name="total_cost" 
-                                           sum="Total"
-                                           invisible="donation_type == 'external'"
-                                           widget="monetary"/>
-                                    <field name="condition"/>
-                                    <field name="donation_type" column_invisible="1"/>
-                                </tree>
-                            </field>
-                            
-                            <group class="oe_subtotal_footer oe_right">
-                                <field name="book_count" string="Total de Libros"/>
-                                <field name="total_cost" 
-                                       widget="monetary"
-                                       invisible="donation_type == 'external'"
-                                       class="oe_subtotal_footer_separator"/>
-                            </group>
+                            <field name="book_ids" readonly="state != 'draft'">
+    
+                                <tree string="Libros Donados">
+                                   <field name="title"/>
+                                   <field name="author"/>
+                                   <field name="isbn"/>
+                                   <field name="quantity" sum="Total Libros"/>
+                                   <field name="cost" string="Costo Unit."/>
+                                   <field name="total_cost" sum="Costo Total"/>
+                                   <field name="condition" string="Estado"/>
+                               </tree>
+
+                               <form string="Detalle del Libro">
+                                   <sheet>
+                                      <group>
+                                          <group string="Información Principal">
+                                              <field name="title" required="1"/>
+                                              <field name="author"/>
+                                              <field name="isbn"/>
+                                          </group>
+                                         <group string="Edición y Publicación">
+                                              <field name="publisher"/>
+                                              <field name="edition"/>
+                                              <field name="publication_year" options="{'format': 0}"/>
+                                         </group>
+                                         <group string="Costos y Estado">
+                                              <field name="quantity"/>
+                                              <field name="cost"/>
+                                              <field name="total_cost" readonly="1"/>
+                                              <field name="condition"/>
+                                         </group>
+                                      </group>
+                                   </sheet>
+                                </form>
+                             </field>
                         </page>
                         
                         <!-- FACTURA Y DOCUMENTOS -->
